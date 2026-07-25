@@ -1,3 +1,5 @@
+pip install -r requirements.txt
+
 1. Run control.pyw
 2. Start process
 3. Can close control.pyw as its a separate process from listener.py
