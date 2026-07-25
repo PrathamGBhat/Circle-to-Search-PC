@@ -9,7 +9,7 @@ import psutil
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LISTENER_SCRIPT = os.path.join(BASE_DIR, "listener.py")
 PID_FILE = os.path.join(BASE_DIR, "listener.pid")
-PYTHONW = os.path.join(sys.exec_prefix, "pythonw.exe")
+PYTHONW = os.path.join(sys.exec_prefix, "Scripts", "pythonw.exe")
 
 def get_running_pid():
 
