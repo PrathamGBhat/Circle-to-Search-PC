@@ -3,6 +3,7 @@ import os
 import sys
 import time
 import pyperclip
+import ollama_client
 
 # File in same directory to track the pid of this listener script - Will be tracked by the control panel file
 PID_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "listener.pid")
@@ -67,8 +68,11 @@ def on_activate():
 
     # Write captured text to file if exists
     if captured:
+
+        # Remove later
         with open(OUTPUT_FILE, "a", encoding="utf-8") as f:
             f.write(captured + "\n---\n")
+        ollama_client.handle(captured)
 
     # Restore original copied text if exists
     if prev_clipb is not None:

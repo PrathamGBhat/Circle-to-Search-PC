@@ -13,3 +13,7 @@ suspends all notifications in sensitive contexts such as
 driving to prevent harm.
 
 ---
+CREATE_NO_WINDOW
+---
+Already running
+---
