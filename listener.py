@@ -10,7 +10,8 @@ PID_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "listener.pi
 # File in same directory where captured text gets saved
 OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "listener_log.txt")
 
-HOTKEY = {keyboard.Key.ctrl_l, keyboard.Key.space}
+# Search for HOTKEY for global search
+HOTKEY = {keyboard.Key.ctrl_l, keyboard.Key.shift_l,keyboard.Key.f9}
 
 # Tracks currently pressed keys
 current_keys = set()
@@ -49,9 +50,10 @@ def on_activate():
     pyperclip.copy("")
     time.sleep(0.05)
 
-    # Release hotkeys
+    # HOTKEY - Release hotkeys
     kb_controller.release(keyboard.Key.ctrl_l)
-    kb_controller.release(keyboard.Key.space)
+    kb_controller.release(keyboard.Key.shift_l)
+    kb_controller.release(keyboard.Key.f9)
 
     # Simulate Ctrl+C
     kb_controller.press(keyboard.Key.ctrl_l)
