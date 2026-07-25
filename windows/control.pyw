@@ -5,6 +5,10 @@ import os
 import sys
 import psutil
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from utils.logging_utils import LOG_FILE, log_error, log_event
+
 # Global config
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LISTENER_SCRIPT = os.path.join(BASE_DIR, "listener.py")
@@ -52,14 +56,20 @@ def start_listener():
     DETACHED_PROCESS = 0x00000008 # Make it a separate process from the control panel
 
     # Start new process
-    with open("listener_error.txt", "w") as err:
-        subprocess.Popen(
-            [PYTHONW, LISTENER_SCRIPT],
-            creationflags=CREATE_NO_WINDOW | DETACHED_PROCESS,
-            close_fds=True,
-            stderr=err,
-            stdout=err,
-        )
+    try:
+        with open(LOG_FILE, "a", encoding="utf-8") as err:
+            subprocess.Popen(
+                [PYTHONW, LISTENER_SCRIPT],
+                creationflags=CREATE_NO_WINDOW | DETACHED_PROCESS,
+                close_fds=True,
+                stderr=err,
+                stdout=err,
+            )
+    except Exception as exc:
+        log_error("Failed to start the listener process", exc)
+        messagebox.showerror("Start failed", "Could not start the listener. Check log.txt for details.")
+        refresh()
+        return
 
     # Refresh after delay
     root.after(800, refresh)  # give it a moment to write its PID file
@@ -76,6 +86,7 @@ def stop_listener():
     # Terminate process
     try:
         psutil.Process(pid).terminate()
+        log_event("Listener stopped")
     except psutil.NoSuchProcess:
         pass
 

@@ -9,11 +9,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Import ollama handle from core
 from core import handle as ollama_handle
 
+# Import logging functions
+from utils.logging_utils import append_log, log_error, log_event
+
 # File in same directory to track the pid of this listener script - Will be tracked by the control panel file
 PID_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "listener.pid")
-
-# File in same directory where captured text gets saved
-OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "listener_log.txt")
 
 # Search for HOTKEY for global search
 HOTKEY = {keyboard.Key.ctrl_l, keyboard.Key.shift_l,keyboard.Key.f9}
@@ -45,43 +45,45 @@ def cleanup():
 
 def on_activate():
 
-    # Save backup of existing copied text into prev_clipb
     try:
-        prev_clipb = pyperclip.paste()
-    except Exception:
-        prev_clipb = None
+        # Save backup of existing copied text into prev_clipb
+        try:
+            prev_clipb = pyperclip.paste()
+        except Exception as exc:
+            prev_clipb = None
+            log_error("Failed to read the clipboard before copying", exc)
 
-    # Initialize a clear clipboard
-    pyperclip.copy("")
-    time.sleep(0.05)
+        # Initialize a clear clipboard
+        pyperclip.copy("")
+        time.sleep(0.05)
 
-    # HOTKEY - Release hotkeys
-    kb_controller.release(keyboard.Key.ctrl_l)
-    kb_controller.release(keyboard.Key.shift_l)
-    kb_controller.release(keyboard.Key.f9)
+        # HOTKEY - Release hotkeys
+        kb_controller.release(keyboard.Key.ctrl_l)
+        kb_controller.release(keyboard.Key.shift_l)
+        kb_controller.release(keyboard.Key.f9)
 
-    # Simulate Ctrl+C
-    kb_controller.press(keyboard.Key.ctrl_l)
-    kb_controller.press('c')
-    kb_controller.release('c')
-    kb_controller.release(keyboard.Key.ctrl_l)
+        # Simulate Ctrl+C
+        kb_controller.press(keyboard.Key.ctrl_l)
+        kb_controller.press('c')
+        kb_controller.release('c')
+        kb_controller.release(keyboard.Key.ctrl_l)
 
-    # Delay and store text from simulated copy into captured
-    time.sleep(0.15)
-    captured = pyperclip.paste()
+        # Delay and store text from simulated copy into captured
+        time.sleep(0.15)
+        captured = pyperclip.paste()
 
-    # Write captured text to file if exists
-    if captured:
+        # Write captured text to the shared project log if it exists
+        if captured:
+            log_event("Text copied")
+            append_log("Captured text:", captured, "---")
+            log_event("Text sent to ollama")
+            ollama_handle(captured)
 
-        # Remove later
-        with open(OUTPUT_FILE, "a", encoding="utf-8") as f:
-            f.write(captured + "\n---\n")
-        print("Sending to ollama")
-        ollama_handle(captured)
-
-    # Restore original copied text if exists
-    if prev_clipb is not None:
-        pyperclip.copy(prev_clipb)
+        # Restore original copied text if it exists
+        if prev_clipb is not None:
+            pyperclip.copy(prev_clipb)
+    except Exception as exc:
+        log_error("Failed while handling the hotkey activation", exc)
 
 def on_press(key):
 
@@ -99,6 +101,7 @@ def on_release(key):
     current_keys.discard(key)
 
 def main():
+    log_event("Process started")
     write_pid()
     try:
         

@@ -2,17 +2,15 @@ import os
 import subprocess
 import time
 from pathlib import Path
-
 import requests
-
+from utils.logging_utils import append_log, log_error, log_event
 
 MODULE_DIR = Path(__file__).resolve().parent
-OUTPUT_FILE = MODULE_DIR.parent / "windows" / "ollama_output.txt"
 
 # Ollama config
 OLLAMA_HOST = "http://localhost:11434"
 OLLAMA_URL = OLLAMA_HOST + "/api/generate"
-OLLAMA_MODEL = "qwen3:4b"  # change to whatever model you have pulled, e.g. "mistral", "phi3", etc.
+OLLAMA_MODEL = "qwen3:4b"  # change as required
 
 # Server config
 STARTUP_TIMEOUT_SECONDS = 30
@@ -54,16 +52,20 @@ def start_ollama():
                 time.sleep(POLL_INTERVAL_SECONDS)
                 waited += POLL_INTERVAL_SECONDS
                 if ping_server():
+                        log_event("Server started")
                         return True # If server ready
             return False # If timeout
 
         # Handle exceptions
         except FileNotFoundError: # Ollama not installed
+            log_error("Ollama executable was not found")
             return False
-        except Exception:
+        except Exception as exc:
+            log_error("Failed to start Ollama", exc)
             return False
 
     # If first ping is successful return True
+    log_event("Server already running")
     return True
 
 
@@ -71,6 +73,7 @@ def query_ollama(prompt):
 
     # Send prompt to ollama
     try:
+        log_event("Query sent")
         response = requests.post(
             OLLAMA_URL,
             json={
@@ -85,22 +88,21 @@ def query_ollama(prompt):
         return data.get("response", "").strip()
 
     # Handle exceptions
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.ConnectionError as exc:
+        log_error("Could not connect to Ollama", exc)
         return "[Error: could not connect to Ollama. Is 'ollama serve' running on localhost:11434?]"
-    except requests.exceptions.Timeout:
+    except requests.exceptions.Timeout as exc:
+        log_error("Ollama request timed out", exc)
         return "[Error: Ollama took too long to respond.]"
     except Exception as e:
+        log_error("Error talking to Ollama", e)
         return f"[Error talking to Ollama: {e}]"
 
 
 def save_result(question, answer):
 
     # Save output from ollama to file
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUTPUT_FILE, "a", encoding="utf-8") as f:
-        f.write("Q: " + question + "\n")
-        f.write("A: " + answer + "\n")
-        f.write("---\n")
+    append_log("Q: " + question, "A: " + answer, "---")
 
 
 # Endpoint hit by listener.py
@@ -117,6 +119,7 @@ def handle(text):
 
     # Query ollama
     answer = query_ollama(text)
+    log_event("Response received")
 
     # Save answer to file
     save_result(text, answer)
