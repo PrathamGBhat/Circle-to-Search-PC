@@ -1,0 +1,6 @@
+pynput
+mss
+pillow
+requests
+psutil
+pyperclip
