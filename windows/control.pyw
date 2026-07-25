@@ -52,11 +52,14 @@ def start_listener():
     DETACHED_PROCESS = 0x00000008 # Make it a separate process from the control panel
 
     # Start new process
-    subprocess.Popen(
-        [PYTHONW, LISTENER_SCRIPT],
-        creationflags=CREATE_NO_WINDOW | DETACHED_PROCESS,
-        close_fds=True,
-    )
+    with open("listener_error.txt", "w") as err:
+        subprocess.Popen(
+            [PYTHONW, LISTENER_SCRIPT],
+            creationflags=CREATE_NO_WINDOW | DETACHED_PROCESS,
+            close_fds=True,
+            stderr=err,
+            stdout=err,
+        )
 
     # Refresh after delay
     root.after(800, refresh)  # give it a moment to write its PID file

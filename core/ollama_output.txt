@@ -39,11 +39,11 @@ I should consider different scenarios. If they're talking about a computer proce
 
 Another angle: in some contexts, "already running" could relate to a game server. Like, if they're trying to start a Minecraft server, but it's already running. They might need instructions on how to check the status or manage it.
 
-I should ask for more details. What exactly are they referring to? Is it a computer process, a game server, or something else? Without more context, it's hard to give specific advice.
-
 Also, possible follow-up questions: Are you trying to start a new instance of something that's already running? Or are you encountering an error because something is already active? Maybe they need help troubleshooting why a service isn't starting or how to check if a process is running.
 
-I should respond by asking for clarification and examples. That way, I can provide more targeted assistance based on their specific situation.
+I should respond by asking for clarification. What exactly are they referring to? Is it a computer process, a game server, or something else? Without more context, it's hard to give specific advice.
+
+Let me ask for details so I can help better.
 </think>
 
 It seems like you're referring to something that's already in operation (e.g., a process, application, or service). Could you clarify the context? For example:

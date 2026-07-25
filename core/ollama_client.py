@@ -1,10 +1,13 @@
 import os
 import subprocess
 import time
+from pathlib import Path
+
 import requests
 
-# File in same directory to store Ollama output
-OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ollama_output.txt")
+
+MODULE_DIR = Path(__file__).resolve().parent
+OUTPUT_FILE = MODULE_DIR.parent / "windows" / "ollama_output.txt"
 
 # Ollama config
 OLLAMA_HOST = "http://localhost:11434"
@@ -18,6 +21,7 @@ POLL_INTERVAL_SECONDS = 0.5
 # Subprocess instruction
 CREATE_NO_WINDOW = 0x08000000
 
+
 def ping_server():
 
     # Return true if server responds and vice versa
@@ -26,6 +30,7 @@ def ping_server():
         return True
     except requests.exceptions.RequestException:
         return False
+
 
 def start_ollama():
 
@@ -36,11 +41,13 @@ def start_ollama():
             # Start subprocess
             subprocess.Popen(
                 ["ollama", "serve"],
-                creationflags= CREATE_NO_WINDOW,
+                creationflags=CREATE_NO_WINDOW,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 close_fds=True,
             )
+
+            waited = 0
 
             # Poll till server ready or server timeout
             while waited < STARTUP_TIMEOUT_SECONDS:
@@ -89,10 +96,12 @@ def query_ollama(prompt):
 def save_result(question, answer):
 
     # Save output from ollama to file
+    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT_FILE, "a", encoding="utf-8") as f:
         f.write("Q: " + question + "\n")
         f.write("A: " + answer + "\n")
         f.write("---\n")
+
 
 # Endpoint hit by listener.py
 def handle(text):
