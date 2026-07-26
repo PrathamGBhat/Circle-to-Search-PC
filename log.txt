@@ -1,1 +1,165 @@
 [2026-07-25 23:11:26] Listener stopped
+[2026-07-26 12:27:01] ERROR: Failed to start the listener process
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\control.pyw", line 61, in start_listener
+    subprocess.Popen(
+    ~~~~~~~~~~~~~~~~^
+        [PYTHONW, LISTENER_SCRIPT],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        stdout=err,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\subprocess.py", line 1038, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\subprocess.py", line 1552, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+                             # no special security
+                             ^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+                             cwd,
+                             ^^^^
+                             startupinfo)
+                             ^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] The system cannot find the file specified
+[2026-07-26 12:27:35] Process started
+[2026-07-26 12:27:49] Text copied
+[2026-07-26 12:27:49] Captured text:
+Failed while handling the hotkey
+---
+[2026-07-26 12:27:49] Text sent to ollama
+[2026-07-26 12:27:51] Server already running
+[2026-07-26 12:27:51] Query sent
+[2026-07-26 12:29:53] ERROR: Ollama request timed out
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connection.py", line 571, in getresponse
+    httplib_response = super().getresponse()
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\http\client.py", line 1450, in getresponse
+    response.begin()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\http\client.py", line 336, in begin
+    version, status, reason = self._read_status()
+                              ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\http\client.py", line 297, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\socket.py", line 725, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+TimeoutError: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\adapters.py", line 696, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\util\retry.py", line 498, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connectionpool.py", line 536, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\OneDrive\Desktop\Doraemon\core\ollama_client.py", line 77, in query_ollama
+    response = requests.post(
+        OLLAMA_URL,
+    ...<5 lines>...
+        timeout=120,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\api.py", line 134, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\api.py", line 71, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\adapters.py", line 742, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)
+[2026-07-26 12:29:53] Response received
+[2026-07-26 12:29:53] Q: Failed while handling the hotkey
+A: [Error: Ollama took too long to respond.]
+---
+[2026-07-26 12:32:46] Listener stopped
+[2026-07-26 15:58:51]
+Process started
+[2026-07-26 15:59:01]
+Text copied
+[2026-07-26 15:59:01]
+Captured text:
+Process started
+---
+[2026-07-26 15:59:01]
+Text sent to ollama
+[2026-07-26 15:59:03]
+Server already running
+[2026-07-26 15:59:03]
+Query sent
+[2026-07-26 16:00:42]
+Response received
+[2026-07-26 16:00:42]
+Q: Process started
+A: <think>
+Okay, the user wrote "Process started". I need to figure out what they mean by that. Maybe they're referring to a process in a programming context, like starting a task or a program. Or could it be something else, like a system process?
+
+First, I should consider possible interpretations. In computing terms, "process" can refer to a running program or task. So if someone says "Process started", they might be indicating that a particular process has begun execution. But without more context, it's hard to tell.
+
+I need to ask for clarification. The user might not have provided enough details. For example, are they talking about starting a specific application, a background service, or something else? Also, maybe they're referring to a system process that's been initiated, like a daemon or a background task.
+
+Another angle: could this be related to a software development context, such as starting a build process or a test run? Or perhaps in a more general sense, like initiating a workflow or procedure?
+
+Since the user hasn't specified further, I should prompt them for more information. Maybe they can elaborate on what exactly they mean by "Process started". Are there specific tools, systems, or contexts involved? For instance, is this related to Docker containers, a scripting language, an operating system command, or something else?
+
+I should also think about common scenarios where someone might say "process started". For example, in a terminal window, running a command like "start process" or using a tool that initiates a process. Or perhaps in a development environment, starting a server or a service.
+
+In any case, the best approach is to ask for more details. The user needs to specify what they mean by "Process started" to get an accurate and helpful response.
+</think>
+
+It seems like you're referring to something related to a **process** (a running task or program). Could you clarify what exactly you mean? For example:
+
+- Are you starting a **software process** (e.g., a server, script, or application)?
+- Is this in the context of a **system process** (e.g., background tasks on an OS)?
+- Or is it related to something like **Docker**, **build pipelines**, or **workflow automation**?
+
+Let me know more details, and I’ll help further! 🛠️
+---
+[2026-07-26 16:05:22]
+Listener stopped

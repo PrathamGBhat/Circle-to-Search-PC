@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core import handle as ollama_handle
 
 # Import logging functions
-from utils.logging_utils import append_log, log_error, log_event
+from utils.logging_utils import append_log, log_error
 
 # File in same directory to track the pid of this listener script - Will be tracked by the control panel file
 PID_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "listener.pid")
@@ -74,9 +74,9 @@ def on_activate():
 
         # Write captured text to the shared project log if it exists
         if captured:
-            log_event("Text copied")
+            append_log("Text copied")
             append_log("Captured text:", captured, "---")
-            log_event("Text sent to ollama")
+            append_log("Text sent to ollama")
             ollama_handle(captured)
 
         # Restore original copied text if it exists
@@ -101,7 +101,7 @@ def on_release(key):
     current_keys.discard(key)
 
 def main():
-    log_event("Process started")
+    append_log("Process started")
     write_pid()
     try:
         

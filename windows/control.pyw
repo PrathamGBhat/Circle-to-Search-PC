@@ -7,7 +7,7 @@ import psutil
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from utils.logging_utils import LOG_FILE, log_error, log_event
+from utils.logging_utils import LOG_FILE, log_error, append_log
 
 # Global config
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -86,7 +86,7 @@ def stop_listener():
     # Terminate process
     try:
         psutil.Process(pid).terminate()
-        log_event("Listener stopped")
+        append_log("Listener stopped")
     except psutil.NoSuchProcess:
         pass
 

@@ -3,7 +3,7 @@ import subprocess
 import time
 from pathlib import Path
 import requests
-from utils.logging_utils import append_log, log_error, log_event
+from utils.logging_utils import append_log, log_error
 
 MODULE_DIR = Path(__file__).resolve().parent
 
@@ -52,7 +52,7 @@ def start_ollama():
                 time.sleep(POLL_INTERVAL_SECONDS)
                 waited += POLL_INTERVAL_SECONDS
                 if ping_server():
-                        log_event("Server started")
+                        append_log("Server started")
                         return True # If server ready
             return False # If timeout
 
@@ -65,7 +65,7 @@ def start_ollama():
             return False
 
     # If first ping is successful return True
-    log_event("Server already running")
+    append_log("Server already running")
     return True
 
 
@@ -73,7 +73,7 @@ def query_ollama(prompt):
 
     # Send prompt to ollama
     try:
-        log_event("Query sent")
+        append_log("Query sent")
         response = requests.post(
             OLLAMA_URL,
             json={
@@ -119,7 +119,7 @@ def handle(text):
 
     # Query ollama
     answer = query_ollama(text)
-    log_event("Response received")
+    append_log("Response received")
 
     # Save answer to file
     save_result(text, answer)
