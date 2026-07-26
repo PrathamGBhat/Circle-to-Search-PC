@@ -163,3 +163,118 @@ Let me know more details, and I’ll help further! 🛠️
 ---
 [2026-07-26 16:05:22]
 Listener stopped
+[2026-07-26 16:27:29]
+Process started
+[2026-07-26 16:27:35]
+Text copied
+[2026-07-26 16:27:35]
+Captured text:
+get_running_pid
+---
+[2026-07-26 16:27:35]
+Overlay opened
+[2026-07-26 16:27:41]
+Explain clicked, sending to Ollama
+[2026-07-26 16:27:43]
+Server already running
+[2026-07-26 16:27:43]
+Query sent
+[2026-07-26 16:29:45]
+ERROR: Ollama request timed out
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connection.py", line 571, in getresponse
+    httplib_response = super().getresponse()
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\http\client.py", line 1450, in getresponse
+    response.begin()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\http\client.py", line 336, in begin
+    version, status, reason = self._read_status()
+                              ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\http\client.py", line 297, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\socket.py", line 725, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+TimeoutError: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\adapters.py", line 696, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\util\retry.py", line 498, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connectionpool.py", line 536, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\OneDrive\Desktop\Doraemon\core\ollama_client.py", line 77, in query_ollama
+    response = requests.post(
+        OLLAMA_URL,
+    ...<5 lines>...
+        timeout=120,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\api.py", line 134, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\api.py", line 71, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Doraemon\windows\venv\Lib\site-packages\requests\adapters.py", line 742, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)
+[2026-07-26 16:29:45]
+Response received
+[2026-07-26 16:29:45]
+Q: get_running_pid
+A: [Error: Ollama took too long to respond.]
+---
+[2026-07-26 16:32:07]
+Text copied
+[2026-07-26 16:32:07]
+Captured text:
+threading.
+---
+[2026-07-26 16:32:07]
+Overlay opened
+[2026-07-26 16:32:11]
+Text copied
+[2026-07-26 16:32:11]
+Captured text:
+listener
+---
+[2026-07-26 16:32:11]
+Overlay opened
+[2026-07-26 16:34:11]
+Listener stopped

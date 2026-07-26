@@ -1,22 +1,18 @@
 from pynput import keyboard
 import os
 import sys
+import threading
 import time
 import pyperclip
-
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-# Import ollama handle from core
-from core import handle as ollama_handle
-
-# Import logging functions
+from ui.overlay import Overlay
 from utils.logging_utils import append_log, log_error
 
 # File in same directory to track the pid of this listener script - Will be tracked by the control panel file
 PID_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "listener.pid")
 
 # Search for HOTKEY for global search
-HOTKEY = {keyboard.Key.ctrl_l, keyboard.Key.shift_l,keyboard.Key.f9}
+HOTKEY = {keyboard.Key.ctrl_l, keyboard.Key.shift_l, keyboard.Key.f9}
 
 # Tracks currently pressed keys
 current_keys = set()
@@ -24,11 +20,16 @@ current_keys = set()
 # To simulate key presses
 kb_controller = keyboard.Controller()
 
+# Single overlay instance shared between the hotkey thread and the Tk mainloop
+overlay = Overlay()
+
+
 def write_pid():
 
     # Write pid to file
     with open(PID_FILE, "w") as f:
         f.write(str(os.getpid()))
+
 
 def cleanup():
 
@@ -42,6 +43,7 @@ def cleanup():
                     os.remove(PID_FILE)
         except Exception:
             pass
+
 
 def on_activate():
 
@@ -72,18 +74,19 @@ def on_activate():
         time.sleep(0.15)
         captured = pyperclip.paste()
 
-        # Write captured text to the shared project log if it exists
+        # Show the overlay with the captured text if it exists
         if captured:
             append_log("Text copied")
             append_log("Captured text:", captured, "---")
-            append_log("Text sent to ollama")
-            ollama_handle(captured)
+            append_log("Overlay opened")
+            overlay.show(captured)
 
         # Restore original copied text if it exists
         if prev_clipb is not None:
             pyperclip.copy(prev_clipb)
     except Exception as exc:
         log_error("Failed while handling the hotkey activation", exc)
+
 
 def on_press(key):
 
@@ -95,21 +98,32 @@ def on_press(key):
         if all(k in current_keys for k in HOTKEY):
             on_activate()
 
+
 def on_release(key):
 
     # Stop tracking in current_keys
     current_keys.discard(key)
+
+
+def hotkey_listener():
+
+    # Register user defined functions to respond to press and release
+    with keyboard.Listener(on_press=on_press, on_release=on_release) as kb_listener:
+        kb_listener.join()
+
 
 def main():
     append_log("Process started")
     write_pid()
     try:
         
-        # Register user defined functions to respond to press and release
-        with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
-            listener.join()
+        # The keyboard listener runs in background while overlay runs
+        listener_thread = threading.Thread(target=hotkey_listener, daemon=True)
+        listener_thread.start()
+        overlay.run()
     finally:
         cleanup()
+
 
 if __name__ == "__main__":
     main()
