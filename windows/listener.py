@@ -1,10 +1,9 @@
 import os
 import sys
 import threading
-import time
 
 from pynput import keyboard
-import pyperclip
+from PIL import Image, ImageGrab
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from frontend.overlay import Overlay
@@ -14,7 +13,6 @@ PID_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "listener.pi
 HOTKEY = [keyboard.Key.ctrl_l, keyboard.Key.shift_l, keyboard.Key.f9] # Ctrl + Shift + F9 by default
 
 overlay = Overlay()
-kb_simulator = keyboard.Controller()
 current_keys = set() # Track keys pressed
 
 def hotkey_listener():
@@ -39,44 +37,25 @@ def on_release(key):
     current_keys.discard(key)
 
 def on_activate():
-
     try:
-        
-        # Save backup of existing copied text into prev_clipb
+
+        # Capture any image from clipboard if it exists and send to overlay
         try:
-            prev_clipb = pyperclip.paste()
+            clipboard_content = ImageGrab.grabclipboard()
         except Exception as exc:
-            prev_clipb = None
-            log_error("Failed to read the clipboard before copying", exc)
+            clipboard_content = None
+            log_error("Failed to read the clipboard", exc)
 
-        # Initialize a clear clipboard
-        pyperclip.copy("")
-        time.sleep(0.05)
+        image = clipboard_content if isinstance(clipboard_content, Image.Image) else None
 
-        # Release hotkeys and simulate Ctrl + C
-        for i in HOTKEY:
-            kb_simulator.release(i)
-
-        kb_simulator.press(keyboard.Key.ctrl_l)
-        kb_simulator.press('c')
-        kb_simulator.release('c')
-        kb_simulator.release(keyboard.Key.ctrl_l)
-
-        # Delay and store text from simulated copy into captured
-        time.sleep(0.15)
-        captured = pyperclip.paste()
-
-        # Show the overlay with the captured text
-        if captured:
-            append_log("Text copied")
-            append_log("Captured text:", captured, "---")
-
+        if image is not None:
+            append_log("Image found on clipboard")
             append_log("Overlay opened")
-            overlay.send(captured)
-
-        # Restore original copied text
-        if prev_clipb is not None:
-            pyperclip.copy(prev_clipb)
+            overlay.send(image=image)
+        else:
+            append_log("No image on clipboard")
+            append_log("Overlay opened")
+            overlay.send()
 
     except Exception as exc:
         log_error("Failed while handling the hotkey activation", exc)
@@ -98,7 +77,7 @@ def main():
     write_pid()
 
     try:
-        
+
         # The keyboard listener runs in background while overlay runs
         listener_thread = threading.Thread(target=hotkey_listener, daemon=True)
         listener_thread.start()

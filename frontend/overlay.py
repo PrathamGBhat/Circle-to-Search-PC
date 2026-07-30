@@ -4,6 +4,8 @@ import threading
 import tkinter as tk
 from tkinter import scrolledtext
 
+from PIL import Image, ImageTk
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from backend import send_to_backend
 from utils.logging_utils import append_log, log_error
@@ -15,13 +17,18 @@ CURSOR_OFFSET_X = 20
 CURSOR_OFFSET_Y = 20
 INPUT_BOX_HEIGHT = 3
 
+# Thumbnail sizes
+PREVIEW_THUMB_SIZE = (160, 120)   # image waiting to be sent, shown above the input box
+CHAT_THUMB_SIZE = (140, 100)      # image already sent, shown inline in the chat log
+
 class Overlay:
     """
     Small resizable popup shown near the cursor after a capture, similar
     to the Circle to Search popup. Behaves like a lightweight chat window:
-    the captured text is dropped into an editable input box (like pasting
-    into a chatbox) so the user can tweak it before sending, and every
-    sent message plus its reply is appended to a scrolling chat log above.
+    if an image was captured (e.g. via the Snipping Tool) it's shown as a
+    small preview above the input box; the user always types their own
+    message, and every sent message (plus any attached image) and its
+    reply is appended to a scrolling chat log above.
     """
 
     def __init__(self):
@@ -37,47 +44,90 @@ class Overlay:
         self.input_box = None
         self.status_label = None
         self.send_btn = None
+        self.preview_frame = None
+        self.preview_label = None
+        self.remove_image_btn = None
         self._assistant_body_start = None
 
-    # Called from the listener's (background) thread
-    def send(self, text):
-        self.root.after(0, self._load_into_input, text)
+        # The image currently attached and waiting to be sent, plus a
+        # reference to its Tk PhotoImage (Tk drops images without a live
+        # Python reference, so we have to hold onto these ourselves).
+        self.current_image = None
+        self._preview_photo = None
+        self._chat_photos = []  # keeps chat-log thumbnails alive
+
+    # Called from the listener's (background) thread. Pass an `image`
+    # (a PIL Image) when one was found on the clipboard; omit it to just
+    # open/focus the overlay for a plain text message.
+    def send(self, image=None):
+        self.root.after(0, self._prepare_for_input, image)
 
     def run(self):
         # Blocks - must be called from the main thread
         self.root.mainloop()
 
-    def _load_into_input(self, text):
-        # Drops the captured text straight into the input box, as if it
-        # had been pasted in, without touching any existing conversation
-        # already in the chat log above.
+    def _prepare_for_input(self, image=None):
+        # Opens (or refocuses) the overlay and attaches the given image, if
+        # any, as a pending preview. The user's own typing is what actually
+        # becomes the message; nothing is pre-filled into the input box.
         if self.window is not None and self.window.winfo_exists():
             self._reposition_window()
         else:
             self._create_window()
 
-        self.input_box.delete("1.0", tk.END)
-        self.input_box.insert(tk.END, text or "")
+        self.current_image = image
+        self._update_preview()
 
-        self.status_label.configure(text="Captured text ready - edit and send")
+        if image is not None:
+            self.status_label.configure(text="Image attached - type a message and send")
+        else:
+            self.status_label.configure(text="Type a message and send")
+
         self.send_btn.configure(state="normal", text="Send")
 
         self.window.deiconify()
         self.window.lift()
         self.window.focus_force()
         self.input_box.focus_set()
-        self.input_box.mark_set(tk.INSERT, tk.END)
 
-    def _append_message(self, sender, message):
-        # Adds a labeled message to the chat log and scrolls to the bottom.
-        # Returns the index right before the message body, so callers (like
-        # the "Thinking..." placeholder) can later replace just that body
-        # without touching the "Sender: " label.
+    def _update_preview(self):
+        # Shows/hides the pending-image preview above the input box.
+        if self.current_image is not None:
+            thumb = self.current_image.copy()
+            thumb.thumbnail(PREVIEW_THUMB_SIZE)
+            self._preview_photo = ImageTk.PhotoImage(thumb)
+            self.preview_label.configure(image=self._preview_photo, text="")
+            self.preview_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=8, pady=(0, 4))
+        else:
+            self._preview_photo = None
+            self.preview_label.configure(image="", text="")
+            self.preview_frame.pack_forget()
+
+    def _remove_image(self):
+        self.current_image = None
+        self._update_preview()
+        self.status_label.configure(text="Image removed - type a message and send")
+
+    def _append_message(self, sender, message, image=None):
+        # Adds a labeled message (and optional thumbnail) to the chat log
+        # and scrolls to the bottom. Returns the index right before the
+        # message body, so callers (like the "Thinking..." placeholder) can
+        # later replace just that body without touching the "Sender: " label.
         self.chat_log.configure(state="normal")
         if self.chat_log.index("end-1c") != "1.0":
             self.chat_log.insert(tk.END, "\n\n")
         self.chat_log.insert(tk.END, f"{sender}: ", ("sender",))
         body_start = self.chat_log.index("end-1c")
+
+        if image is not None:
+            thumb = image.copy()
+            thumb.thumbnail(CHAT_THUMB_SIZE)
+            photo = ImageTk.PhotoImage(thumb)
+            self._chat_photos.append(photo)  # keep a reference alive
+            self.chat_log.image_create(tk.END, image=photo)
+            if message:
+                self.chat_log.insert(tk.END, "\n")
+
         self.chat_log.insert(tk.END, message or "")
         self.chat_log.configure(state="disabled")
         self.chat_log.see(tk.END)
@@ -100,6 +150,16 @@ class Overlay:
 
         self.status_label = tk.Label(self.window, text="", anchor="w")
         self.status_label.pack(side=tk.BOTTOM, fill=tk.X, padx=8)
+
+        # Pending-image preview row (hidden until an image is attached)
+        self.preview_frame = tk.Frame(self.window)
+        self.preview_label = tk.Label(self.preview_frame, anchor="w")
+        self.preview_label.pack(side=tk.LEFT)
+        self.remove_image_btn = tk.Button(
+            self.preview_frame, text="Remove image", command=self._remove_image
+        )
+        self.remove_image_btn.pack(side=tk.RIGHT)
+        # Not packed here - _update_preview() packs/unpacks it as needed.
 
         input_frame = tk.Frame(bottom_frame)
         input_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -155,11 +215,19 @@ class Overlay:
 
     def _on_send(self):
         text = self.input_box.get("1.0", "end-1c").strip()
-        if not text:
+        image = self.current_image
+
+        # Nothing to send if there's neither typed text nor an attached image
+        if not text and image is None:
             return
 
-        self._append_message("You", text)
+        self._append_message("You", text, image=image)
         self.input_box.delete("1.0", tk.END)
+
+        # The image has now been "sent" (dropped into the chat log), so
+        # clear the pending preview for the next message.
+        self.current_image = None
+        self._update_preview()
 
         self.send_btn.configure(state="disabled")
         self.status_label.configure(text="Sending...")

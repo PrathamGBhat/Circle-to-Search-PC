@@ -890,3 +890,25 @@ However, I'm functioning properly and ready to help you with any questions or to
 Response received
 [2026-07-30 23:06:01]
 Listener stopped
+[2026-07-30 23:27:16]
+Process started with PID: 20312
+[2026-07-30 23:27:27]
+Image found on clipboard
+[2026-07-30 23:27:27]
+Overlay opened
+[2026-07-30 23:28:44]
+Send clicked, sending to backend
+[2026-07-30 23:28:44]
+Query sent
+[2026-07-30 23:28:45]
+Q: hello
+A: Hello, how can I assist you today?
+---
+[2026-07-30 23:28:45]
+Response received
+[2026-07-30 23:29:35]
+Image found on clipboard
+[2026-07-30 23:29:35]
+Overlay opened
+[2026-07-30 23:30:47]
+Listener stopped
