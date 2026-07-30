@@ -6,7 +6,6 @@ import sys
 import psutil
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from utils.logging_utils import LOG_FILE, log_error, append_log
 
 # Global config
@@ -17,7 +16,7 @@ PYTHONW = os.path.join(sys.exec_prefix, "Scripts", "pythonw.exe")
 
 def get_running_pid():
 
-    # Handle missing PID file
+    # Missing PID file
     if not os.path.exists(PID_FILE):
         return None
 
@@ -28,7 +27,7 @@ def get_running_pid():
     except (ValueError, OSError):
         return None
 
-    # Handle missing PID
+    # Missing process with PID found
     if not psutil.pid_exists(pid):
         return None
 
@@ -45,19 +44,21 @@ def get_running_pid():
 
 def start_listener():
 
-    # Show existing process if window hangs and start button is clickable twice
+    # Check for pre-existing process with required PID
     if get_running_pid():
+
         messagebox.showinfo("Already running", "The listener is already active.")
+
         refresh()
         return
-
-    # Creation flags for new listener process
-    CREATE_NO_WINDOW = 0x08000000 # Don't open command prompt
-    DETACHED_PROCESS = 0x00000008 # Make it a separate process from the control panel
 
     # Start new process
     try:
         with open(LOG_FILE, "a", encoding="utf-8") as err:
+
+            CREATE_NO_WINDOW = 0x08000000 # Don't open command prompt
+            DETACHED_PROCESS = 0x00000008 # Make it a separate process from the control panel
+
             subprocess.Popen(
                 [PYTHONW, LISTENER_SCRIPT],
                 creationflags=CREATE_NO_WINDOW | DETACHED_PROCESS,
@@ -68,16 +69,16 @@ def start_listener():
     except Exception as exc:
         log_error("Failed to start the listener process", exc)
         messagebox.showerror("Start failed", "Could not start the listener. Check log.txt for details.")
+
         refresh()
         return
 
-    # Refresh after delay
-    root.after(800, refresh)  # give it a moment to write its PID file
+    root.after(800, refresh)
 
 def stop_listener():
     pid = get_running_pid()
 
-    # Handle missing PID
+    # Missing PID
     if not pid:
         messagebox.showinfo("Not running", "The listener isn't currently active.")
         refresh()
@@ -90,9 +91,10 @@ def stop_listener():
     except psutil.NoSuchProcess:
         pass
 
-    # Cleanup PID file and refresh
+    # Cleanup PID file
     if os.path.exists(PID_FILE):
         os.remove(PID_FILE)
+
     refresh()
 
 def refresh():

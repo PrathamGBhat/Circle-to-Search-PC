@@ -5,11 +5,7 @@ import tkinter as tk
 from tkinter import scrolledtext
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-# Import ollama handle from core - overlay is the only thing that talks to it now
-from core import handle as ollama_handle
-
-# Import logging functions
+from backend import send_to_backend
 from utils.logging_utils import append_log, log_error
 
 # Default popup size and offset from the cursor position
@@ -17,7 +13,6 @@ WINDOW_WIDTH = 420
 WINDOW_HEIGHT = 320
 CURSOR_OFFSET_X = 20
 CURSOR_OFFSET_Y = 20
-
 
 class Overlay:
     """
@@ -121,12 +116,12 @@ class Overlay:
         ).start()
 
     def _send_to_ollama(self, text):
-        # NOTE: core.ollama_client.handle() currently only logs the answer
+        # NOTE: core.ollama_client.send_to_backend() currently only logs the answer
         # to log.txt and doesn't return it, so the overlay can't show the
         # response yet. That'll be the next step once ollama_client.py is
         # updated to return the answer instead of just saving it.
         try:
-            ollama_handle(text)
+            send_to_backend(text)
             self.root.after(0, self._on_explain_done, "Response saved to log")
         except Exception as exc:
             log_error("Overlay failed while calling the Ollama client", exc)
