@@ -1,6 +1,7 @@
 pynput
 mss
-pillow
 requests
 psutil
 pyperclip
+PyQt5
+openai

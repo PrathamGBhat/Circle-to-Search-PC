@@ -1,53 +1,47 @@
-from pynput import keyboard
 import os
 import sys
 import threading
 import time
+
+from pynput import keyboard
 import pyperclip
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from ui.overlay import Overlay
+from frontend.overlay import Overlay
 from utils.logging_utils import append_log, log_error
 
-# File in same directory to track the pid of this listener script - Will be tracked by the control panel file
 PID_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "listener.pid")
+HOTKEY = [keyboard.Key.ctrl_l, keyboard.Key.shift_l, keyboard.Key.f9] # Ctrl + Shift + F9 by default
 
-# Search for HOTKEY for global search
-HOTKEY = {keyboard.Key.ctrl_l, keyboard.Key.shift_l, keyboard.Key.f9}
-
-# Tracks currently pressed keys
-current_keys = set()
-
-# To simulate key presses
-kb_controller = keyboard.Controller()
-
-# Single overlay instance shared between the hotkey thread and the Tk mainloop
 overlay = Overlay()
-
+kb_simulator = keyboard.Controller()
+current_keys = set() # Track keys pressed
 
 def write_pid():
-
-    # Write pid to file
     with open(PID_FILE, "w") as f:
         f.write(str(os.getpid()))
 
+def on_press(key):
 
-def cleanup():
+    # Track keys pressed till all hotkeys activated
+    if key in HOTKEY:
+        current_keys.add(key)
+        if all(k in current_keys for k in HOTKEY):
+            on_activate()
 
-    # Check if any pid file is there
-    if os.path.exists(PID_FILE):
-        try:
+def on_release(key):
+    current_keys.discard(key)
 
-            # If it exists delete
-            with open(PID_FILE) as f:
-                if f.read().strip() == str(os.getpid()):
-                    os.remove(PID_FILE)
-        except Exception:
-            pass
+def hotkey_listener():
 
+    # Register the defined functions to respond to press and release
+    with keyboard.Listener(on_press=on_press, on_release=on_release) as kb_listener:
+        kb_listener.join()
 
 def on_activate():
 
     try:
+
         # Save backup of existing copied text into prev_clipb
         try:
             prev_clipb = pyperclip.paste()
@@ -59,70 +53,61 @@ def on_activate():
         pyperclip.copy("")
         time.sleep(0.05)
 
-        # HOTKEY - Release hotkeys
-        kb_controller.release(keyboard.Key.ctrl_l)
-        kb_controller.release(keyboard.Key.shift_l)
-        kb_controller.release(keyboard.Key.f9)
+        # Release hotkeys and simulate Ctrl + C
+        for i in HOTKEY:
+            kb_simulator.release(i)
 
-        # Simulate Ctrl+C
-        kb_controller.press(keyboard.Key.ctrl_l)
-        kb_controller.press('c')
-        kb_controller.release('c')
-        kb_controller.release(keyboard.Key.ctrl_l)
+        kb_simulator.press(keyboard.Key.ctrl_l)
+        kb_simulator.press('c')
+        kb_simulator.release('c')
+        kb_simulator.release(keyboard.Key.ctrl_l)
 
         # Delay and store text from simulated copy into captured
         time.sleep(0.15)
         captured = pyperclip.paste()
 
-        # Show the overlay with the captured text if it exists
+        # Show the overlay with the captured text
         if captured:
             append_log("Text copied")
             append_log("Captured text:", captured, "---")
+
             append_log("Overlay opened")
             overlay.show(captured)
 
-        # Restore original copied text if it exists
+        # Restore original copied text
         if prev_clipb is not None:
             pyperclip.copy(prev_clipb)
+
     except Exception as exc:
         log_error("Failed while handling the hotkey activation", exc)
 
+def cleanup():
 
-def on_press(key):
-
-    # Check if its part of the hotkey combination
-    if key in HOTKEY:
-        current_keys.add(key)
-
-        # If entire combination clicked, run the on_activate function
-        if all(k in current_keys for k in HOTKEY):
-            on_activate()
-
-
-def on_release(key):
-
-    # Stop tracking in current_keys
-    current_keys.discard(key)
-
-
-def hotkey_listener():
-
-    # Register user defined functions to respond to press and release
-    with keyboard.Listener(on_press=on_press, on_release=on_release) as kb_listener:
-        kb_listener.join()
-
+    # Delete PID file and stop corresponding process if it exists
+    if os.path.exists(PID_FILE):
+        try:
+            with open(PID_FILE) as f:
+                if f.read().strip() == str(os.getpid()):
+                    os.remove(PID_FILE)
+        except Exception:
+            pass
 
 def main():
+
     append_log("Process started")
     write_pid()
+
     try:
         
         # The keyboard listener runs in background while overlay runs
         listener_thread = threading.Thread(target=hotkey_listener, daemon=True)
         listener_thread.start()
         overlay.run()
+
     finally:
         cleanup()
+
+
 
 
 if __name__ == "__main__":
