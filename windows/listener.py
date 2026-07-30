@@ -17,6 +17,12 @@ overlay = Overlay()
 kb_simulator = keyboard.Controller()
 current_keys = set() # Track keys pressed
 
+def hotkey_listener():
+
+    # Register the defined functions to respond to press and release
+    with keyboard.Listener(on_press=on_press, on_release=on_release) as kb_listener:
+        kb_listener.join()
+
 def write_pid():
     with open(PID_FILE, "w") as f:
         f.write(str(os.getpid()))
@@ -32,16 +38,10 @@ def on_press(key):
 def on_release(key):
     current_keys.discard(key)
 
-def hotkey_listener():
-
-    # Register the defined functions to respond to press and release
-    with keyboard.Listener(on_press=on_press, on_release=on_release) as kb_listener:
-        kb_listener.join()
-
 def on_activate():
 
     try:
-
+        
         # Save backup of existing copied text into prev_clipb
         try:
             prev_clipb = pyperclip.paste()
@@ -72,7 +72,7 @@ def on_activate():
             append_log("Captured text:", captured, "---")
 
             append_log("Overlay opened")
-            overlay.show(captured)
+            overlay.send(captured)
 
         # Restore original copied text
         if prev_clipb is not None:
@@ -94,7 +94,7 @@ def cleanup():
 
 def main():
 
-    append_log("Process started")
+    append_log(f"Process started with PID: {str(os.getpid())}")
     write_pid()
 
     try:

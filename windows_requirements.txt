@@ -3,5 +3,4 @@ mss
 requests
 psutil
 pyperclip
-PyQt5
 openai

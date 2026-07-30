@@ -1,9 +1,9 @@
-import tkinter as tk
-from tkinter import messagebox
-import subprocess
 import os
 import sys
 import psutil
+import subprocess
+import tkinter as tk
+from tkinter import messagebox
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.logging_utils import LOG_FILE, log_error, append_log
