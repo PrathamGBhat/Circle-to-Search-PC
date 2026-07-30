@@ -21,8 +21,7 @@ services:
     ports:
       - "4000:4000"
     environment:
-      LITELLM_MASTER_KEY: sk-1234
-      LITELLM_SALT_KEY: sk-XXXXXXXXXXXXXXXX
+      LITELLM_MASTER_KEY: <your-master-key-here>
       GROQ_API_KEY: <your-api-key-here>
       OPENAI_API_KEY: <your-api-key-here>
       ANTHROPIC_API_KEY: <your-api-key-here>
