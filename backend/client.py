@@ -13,7 +13,7 @@ client = OpenAI(
 )
 
 def save_result(question, answer):
-    append_log("Q: " + question,"A: " + answer, "---")
+    append_log("Q: " + question, "A: " + answer, "---")
 
 def send_to_backend(text):
 
