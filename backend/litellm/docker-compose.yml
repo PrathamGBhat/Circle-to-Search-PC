@@ -23,10 +23,10 @@ services:
     environment:
       LITELLM_MASTER_KEY: sk-1234
       LITELLM_SALT_KEY: sk-XXXXXXXXXXXXXXXX
-      GROQ_API_KEY: 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
+      GROQ_API_KEY: <your-api-key-here>
       OPENAI_API_KEY: <your-api-key-here>
       ANTHROPIC_API_KEY: <your-api-key-here>
-      GEMINI_API_KEY: AQ.Ab8RN6J1gKtoinRHboB2uKVbOsMhUDhKl5ba36Bn9TaxoSqKdQ
+      GEMINI_API_KEY: <your-api-key-here>
       DEEPSEEK_API_KEY: <your-api-key-here>
       MISTRAL_API_KEY: <your-api-key-here>
       OPENROUTER_API_KEY: <your-api-key-here>
