@@ -7,7 +7,7 @@ from tkinter import scrolledtext
 from PIL import Image, ImageTk
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from backend import send_to_backend
+from backend.services.io_compiler import process as compile_and_send
 from utils.logging_utils import append_log, log_error
 
 # Default popup size and offset from the cursor position
@@ -235,15 +235,19 @@ class Overlay:
         append_log("Send clicked, sending to backend")
 
         threading.Thread(
-            target=self._send_to_backend, args=(text,), daemon=True
+            target=self._send_to_backend, args=(text, image), daemon=True
         ).start()
 
-    def _send_to_backend(self, text):
-        # send_to_backend() returns response.output_text directly, so we
-        # can show the reply in the chat log instead of just logging it.
+    def _send_to_backend(self, text, image):
+        # io_compiler.process() parses the text/image into a normalized
+        # request, sends it to the backend, and returns a normalized
+        # IOResponse we can render directly.
         try:
-            answer = send_to_backend(text)
-            self.root.after(0, self._on_send_done, answer, "Response received")
+            response = compile_and_send(text, image)
+            if response.ok:
+                self.root.after(0, self._on_send_done, response.text, "Response received")
+            else:
+                self.root.after(0, self._on_send_done, response.error, response.error)
         except Exception as exc:
             log_error("Overlay failed while calling the backend", exc)
             self.root.after(

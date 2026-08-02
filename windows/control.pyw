@@ -2,6 +2,7 @@ import os
 import sys
 import psutil
 import subprocess
+
 import tkinter as tk
 from tkinter import messagebox
 
@@ -12,7 +13,8 @@ from utils.logging_utils import LOG_FILE, log_error, append_log
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LISTENER_SCRIPT = os.path.join(BASE_DIR, "listener.py")
 PID_FILE = os.path.join(BASE_DIR, "listener.pid")
-PYTHONW = os.path.join(sys.exec_prefix, "Scripts", "pythonw.exe")
+PYTHONW = (os.path.join(os.path.dirname(BASE_DIR), "venv", "Scripts", "pythonw.exe") # Venv pythonw
+           or os.path.join(sys.base_prefix, "pythonw.exe")) # Default to global pythonw
 
 def get_running_pid():
 

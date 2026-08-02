@@ -12,18 +12,42 @@ client = OpenAI(
     base_url="http://localhost:4000"
 )
 
-def save_result(question, answer):
-    append_log("Q: " + question, "A: " + answer, "---")
+TEXT_MODEL = "my-groq-model"
+VISION_MODEL = "my-gemini-model"
 
-def send_to_backend(text):
+def _build_input(text, image_b64, image_format):
+    if not image_b64:
+        return text
 
-    if not text:
+    content = []
+
+    if text:
+        content.append({"type": "input_text", "text": text})
+
+    content.append({
+        "type": "input_image",
+        "image_url": f"data:image/{image_format.lower()};base64,{image_b64}",
+    })
+    
+    return [{"role": "user", "content": content}]
+
+def send_to_backend(io_request):
+    text = io_request.text
+    image_b64 = io_request.image_b64 if io_request.has_image else None
+    image_format = getattr(io_request, "image_format", "PNG")
+
+    if not text and not image_b64:
         return
+
+    model = VISION_MODEL if image_b64 else TEXT_MODEL
 
     append_log("Query sent")
     try:
-        response = client.responses.create(model="my-groq-model", input=text)
-        save_result(text, response.output_text)
+        response = client.responses.create(
+            model=model, 
+            input=_build_input(text, image_b64, image_format)
+            )
+        append_log("Q: " + text, "A: " + response.output_text, "---")
         append_log("Response received")
         return response.output_text
     except Exception as e:
