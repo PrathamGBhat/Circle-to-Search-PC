@@ -1,9 +1,9 @@
 import os
 import sys
 import threading
+
 import tkinter as tk
 from tkinter import scrolledtext
-
 from PIL import Image, ImageTk
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -21,25 +21,17 @@ INPUT_BOX_HEIGHT = 3
 PREVIEW_THUMB_SIZE = (160, 120)   # image waiting to be sent, shown above the input box
 CHAT_THUMB_SIZE = (140, 100)      # image already sent, shown inline in the chat log
 
+# How long the user has to decide whether clipboard content gets attached
+CLIPBOARD_COUNTDOWN_SECONDS = 3
+
 class Overlay:
-    """
-    Small resizable popup shown near the cursor after a capture, similar
-    to the Circle to Search popup. Behaves like a lightweight chat window:
-    if an image was captured (e.g. via the Snipping Tool) it's shown as a
-    small preview above the input box; the user always types their own
-    message, and every sent message (plus any attached image) and its
-    reply is appended to a scrolling chat log above.
-    """
 
     def __init__(self):
-        # Hidden root window - keeps the Tk mainloop alive for the app.
-        # This must live on the main thread; the hotkey listener runs
-        # separately in a background thread and talks to this instance
-        # through send(), which is thread-safe.
         self.root = tk.Tk()
         self.root.withdraw()
 
         self.window = None
+        self.bottom_frame = None
         self.chat_log = None
         self.input_box = None
         self.status_label = None
@@ -56,30 +48,43 @@ class Overlay:
         self._preview_photo = None
         self._chat_photos = []  # keeps chat-log thumbnails alive
 
-    # Called from the listener's (background) thread. Pass an `image`
-    # (a PIL Image) when one was found on the clipboard; omit it to just
-    # open/focus the overlay for a plain text message.
-    def send(self, image=None):
-        self.root.after(0, self._prepare_for_input, image)
+        # Clipboard-attachment countdown ("Attach from clipboard? Yes/No"),
+        # shown above the input box whenever a capture comes in with an
+        # image and/or text on the clipboard. Nothing is actually attached
+        # until the countdown resolves (either the timer runs out, which
+        # attaches by default, or the user clicks Yes/No).
+        self.clipboard_prompt_frame = None
+        self.clipboard_prompt_label = None
+        self.clipboard_yes_btn = None
+        self.clipboard_no_btn = None
+        self._pending_clipboard_image = None
+        self._pending_clipboard_text = None
+        self._clipboard_countdown_remaining = 0
+        self._clipboard_countdown_after_id = None
+
+    def send(self, image=None, text=None):
+        self.root.after(0, self._prepare_for_input, image, text)
 
     def run(self):
-        # Blocks - must be called from the main thread
         self.root.mainloop()
 
-    def _prepare_for_input(self, image=None):
-        # Opens (or refocuses) the overlay and attaches the given image, if
-        # any, as a pending preview. The user's own typing is what actually
-        # becomes the message; nothing is pre-filled into the input box.
+    def _prepare_for_input(self, image=None, text=None):
+        # Opens (or refocuses) the overlay. If there's an image and/or text
+        # on the clipboard, nothing is attached right away - instead a
+        # short countdown prompt asks whether to attach it at all.
         if self.window is not None and self.window.winfo_exists():
             self._reposition_window()
         else:
             self._create_window()
 
-        self.current_image = image
+        # A fresh capture always overrides whatever the previous countdown
+        # (if any) was still deciding on.
+        self._cancel_clipboard_countdown()
+        self.current_image = None
         self._update_preview()
 
-        if image is not None:
-            self.status_label.configure(text="Image attached - type a message and send")
+        if image is not None or text is not None:
+            self._start_clipboard_countdown(image, text)
         else:
             self.status_label.configure(text="Type a message and send")
 
@@ -107,6 +112,76 @@ class Overlay:
         self.current_image = None
         self._update_preview()
         self.status_label.configure(text="Image removed - type a message and send")
+
+    # ------------------------------------------------------------------
+    # Clipboard attach-or-not countdown
+    # ------------------------------------------------------------------
+
+    def _start_clipboard_countdown(self, image, text):
+        # Stash what's pending; nothing is attached until the countdown
+        # resolves via timeout, Yes, or No.
+        self._pending_clipboard_image = image
+        self._pending_clipboard_text = text
+        self._clipboard_countdown_remaining = CLIPBOARD_COUNTDOWN_SECONDS
+
+        self.clipboard_prompt_frame.pack(
+            side=tk.BOTTOM, fill=tk.X, padx=8, pady=(0, 4), after=self.bottom_frame
+        )
+        self.clipboard_yes_btn.configure(state="normal")
+        self.clipboard_no_btn.configure(state="normal")
+        self.status_label.configure(text="")
+        self._update_clipboard_prompt_label()
+        self._clipboard_countdown_after_id = self.root.after(1000, self._clipboard_countdown_tick)
+
+    def _update_clipboard_prompt_label(self):
+        self.clipboard_prompt_label.configure(
+            text=f"Attach from clipboard? Yes (default)   No        ...{self._clipboard_countdown_remaining}s"
+        )
+
+    def _clipboard_countdown_tick(self):
+        self._clipboard_countdown_remaining -= 1
+        if self._clipboard_countdown_remaining <= 0:
+            self._resolve_clipboard_countdown(attach=True)
+        else:
+            self._update_clipboard_prompt_label()
+            self._clipboard_countdown_after_id = self.root.after(1000, self._clipboard_countdown_tick)
+
+    def _on_clipboard_yes(self):
+        self._resolve_clipboard_countdown(attach=True)
+
+    def _on_clipboard_no(self):
+        self._resolve_clipboard_countdown(attach=False)
+
+    def _resolve_clipboard_countdown(self, attach):
+        # Grab the pending values before cancelling - cancel clears them.
+        image = self._pending_clipboard_image
+        text = self._pending_clipboard_text
+
+        self._cancel_clipboard_countdown()
+
+        if attach and image is not None:
+            self.current_image = image
+            self._update_preview()
+
+        if attach and text:
+            # Prefix the clipboard text into the input box rather than
+            # dropping it - the user's own typing continues right after it,
+            # nothing they type gets overwritten.
+            self.input_box.insert("1.0", text)
+
+        if attach and (image is not None or text):
+            self.status_label.configure(text="Clipboard content attached - type a message and send")
+        else:
+            self.status_label.configure(text="Type a message and send")
+
+    def _cancel_clipboard_countdown(self):
+        if self._clipboard_countdown_after_id is not None:
+            self.root.after_cancel(self._clipboard_countdown_after_id)
+            self._clipboard_countdown_after_id = None
+        if self.clipboard_prompt_frame is not None:
+            self.clipboard_prompt_frame.pack_forget()
+        self._pending_clipboard_image = None
+        self._pending_clipboard_text = None
 
     def _append_message(self, sender, message, image=None):
         # Adds a labeled message (and optional thumbnail) to the chat log
@@ -147,9 +222,29 @@ class Overlay:
 
         bottom_frame = tk.Frame(self.window)
         bottom_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=8, pady=(4, 8))
+        self.bottom_frame = bottom_frame
 
         self.status_label = tk.Label(self.window, text="", anchor="w")
         self.status_label.pack(side=tk.BOTTOM, fill=tk.X, padx=8)
+
+        # Clipboard attach-or-not prompt row (small, sits just above the
+        # input box). Hidden until a capture with clipboard content comes
+        # in - _start_clipboard_countdown()/_cancel_clipboard_countdown()
+        # pack/unpack it as needed.
+        self.clipboard_prompt_frame = tk.Frame(self.window)
+        self.clipboard_prompt_label = tk.Label(
+            self.clipboard_prompt_frame, anchor="w", font=("TkDefaultFont", 8)
+        )
+        self.clipboard_prompt_label.pack(side=tk.LEFT)
+        self.clipboard_no_btn = tk.Button(
+            self.clipboard_prompt_frame, text="No", width=4, command=self._on_clipboard_no
+        )
+        self.clipboard_no_btn.pack(side=tk.RIGHT, padx=(4, 0))
+        self.clipboard_yes_btn = tk.Button(
+            self.clipboard_prompt_frame, text="Yes", width=4, command=self._on_clipboard_yes
+        )
+        self.clipboard_yes_btn.pack(side=tk.RIGHT)
+        # Not packed here - _start_clipboard_countdown() packs it as needed.
 
         # Pending-image preview row (hidden until an image is attached)
         self.preview_frame = tk.Frame(self.window)
@@ -205,6 +300,7 @@ class Overlay:
 
     def _on_close(self):
         # Hide rather than destroy so the same window can be reused
+        self._cancel_clipboard_countdown()
         self.window.withdraw()
 
     def _on_enter_key(self, event):
@@ -214,6 +310,11 @@ class Overlay:
         return "break"
 
     def _on_send(self):
+        # If the clipboard-attach countdown is still running, sending
+        # manually counts as the user's own decision - stop the countdown
+        # without attaching anything further.
+        self._cancel_clipboard_countdown()
+
         text = self.input_box.get("1.0", "end-1c").strip()
         image = self.current_image
 

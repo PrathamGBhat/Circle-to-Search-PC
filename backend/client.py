@@ -39,7 +39,7 @@ def send_to_backend(io_request):
     if not text and not image_b64:
         return
 
-    model = VISION_MODEL if image_b64 else TEXT_MODEL
+    model = VISION_MODEL
 
     append_log("Query sent")
     try:

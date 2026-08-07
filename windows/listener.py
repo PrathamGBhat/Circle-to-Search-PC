@@ -2,6 +2,7 @@ import os
 import sys
 import threading
 
+import pyperclip
 from pynput import keyboard
 from PIL import Image, ImageGrab
 
@@ -41,21 +42,35 @@ def on_activate():
 
         # Capture any image from clipboard if it exists and send to overlay
         try:
-            clipboard_content = ImageGrab.grabclipboard()
+            clipboard_img = ImageGrab.grabclipboard()
         except Exception as exc:
-            clipboard_content = None
+            clipboard_img = None
             log_error("Failed to read the clipboard", exc)
 
-        image = clipboard_content if isinstance(clipboard_content, Image.Image) else None
+        image = clipboard_img if isinstance(clipboard_img, Image.Image) else None
 
         if image is not None:
             append_log("Image found on clipboard")
-            append_log("Overlay opened")
-            overlay.send(image=image)
         else:
             append_log("No image on clipboard")
-            append_log("Overlay opened")
-            overlay.send()
+
+        # Capture any text from clipboard if it exists and send to overlay
+        try:
+            clipboard_text = pyperclip.paste()
+        except Exception as exc:
+            clipboard_text = None
+            log_error("Failed to read text from the clipboard", exc)
+
+        text = clipboard_text if isinstance(clipboard_text, str) and clipboard_text.strip() else None
+
+        if text is not None:
+            append_log("Text found on clipboard")
+        else:
+            append_log("No text on clipboard")
+
+        # Send text and/or image to overlay
+        append_log("Overlay opened")
+        overlay.send(image=image, text=text)
 
     except Exception as exc:
         log_error("Failed while handling the hotkey activation", exc)
@@ -85,9 +100,6 @@ def main():
 
     finally:
         cleanup()
-
-
-
 
 if __name__ == "__main__":
     main()
