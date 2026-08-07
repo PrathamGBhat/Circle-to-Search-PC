@@ -1,20 +1,28 @@
+# PENDING: Fix icon behaviour in tray
+
 import os
 import sys
-import psutil
+import time
 import subprocess
 
-import tkinter as tk
-from tkinter import messagebox
+import psutil
+from PIL import Image
+import pystray
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.logging_utils import LOG_FILE, log_error, append_log
 
 # Global config
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
 LISTENER_SCRIPT = os.path.join(BASE_DIR, "listener.py")
 PID_FILE = os.path.join(BASE_DIR, "listener.pid")
+ICON_FILE = os.path.join(PROJECT_ROOT, "assets", "icon.png")
 PYTHONW = (os.path.join(os.path.dirname(BASE_DIR), "venv", "Scripts", "pythonw.exe") # Venv pythonw
            or os.path.join(sys.base_prefix, "pythonw.exe")) # Default to global pythonw
+APP_NAME = "Hotkey Listener Control"
+
+tray_icon = None
 
 def get_running_pid():
 
@@ -44,14 +52,11 @@ def get_running_pid():
 
     return None
 
-def start_listener():
+def start_listener(icon=None, item=None):
 
     # Check for pre-existing process with required PID
     if get_running_pid():
-
-        messagebox.showinfo("Already running", "The listener is already active.")
-
-        refresh()
+        notify(icon, "Already running", "The listener is already active.")
         return
 
     # Start new process
@@ -68,28 +73,32 @@ def start_listener():
                 stderr=err,
                 stdout=err,
             )
+            refresh(icon)
+
     except Exception as exc:
         log_error("Failed to start the listener process", exc)
-        messagebox.showerror("Start failed", "Could not start the listener. Check log.txt for details.")
-
-        refresh()
+        notify(icon, "Start failed", "Could not start the listener. Check log.txt for details.")
         return
 
-    root.after(800, refresh)
+    time.sleep(0.8)
 
-def stop_listener():
+def start_enabled(item=None):
+    pid = get_running_pid()
+    return pid is None # True if pid!=None
+
+def stop_listener(icon=None, item=None):
     pid = get_running_pid()
 
     # Missing PID
     if not pid:
-        messagebox.showinfo("Not running", "The listener isn't currently active.")
-        refresh()
+        notify(icon, "Not running", "The listener isn't currently active.")
         return
 
     # Terminate process
     try:
         psutil.Process(pid).terminate()
         append_log("Listener stopped")
+        refresh(icon)
     except psutil.NoSuchProcess:
         pass
 
@@ -97,46 +106,51 @@ def stop_listener():
     if os.path.exists(PID_FILE):
         os.remove(PID_FILE)
 
-    refresh()
-
-def refresh():
+def stop_enabled(item=None):
     pid = get_running_pid()
+    return pid is not None # True if pid==None
 
-    # If pid exists, show running pid, disable start, enable stop button
-    if pid:
-        status_label.config(text=f"● Running (PID {pid})", fg="green")
-        start_btn.config(state=tk.DISABLED)
-        stop_btn.config(state=tk.NORMAL)
+def refresh(icon=None, item=None):
+    icon.update_menu()
 
-    # If pid doesn't exist, show stopped, enable start, disable stop button
-    else:
-        status_label.config(text="● Stopped", fg="red")
-        start_btn.config(state=tk.NORMAL)
-        stop_btn.config(state=tk.DISABLED)
+def exit_action(icon, item=None):
+    icon.stop()
 
-# Root tile config
-root = tk.Tk()
-root.title("Hotkey Listener Control")
-root.geometry("280x140")
-root.resizable(False, False)
+def update_icon_text(item=None):
+    pid = get_running_pid()
+    return f"Running (PID {pid})" if pid else "Stopped"
 
-# Initialize content of root tile
-status_label = tk.Label(root, text="Checking...", font=("Segoe UI", 12))
-status_label.pack(pady=15)
-btn_frame = tk.Frame(root)
-btn_frame.pack()
+def notify(icon, title, message):
+    if icon is not None:
+        try:
+            icon.notify(message, title)
+            append_log(f"{title}: {message}")
+            return
+        except Exception:
+            pass
+    append_log(f"{title}: {message}")
 
-# Start button
-start_btn = tk.Button(btn_frame, text="Start", width=10, command=start_listener)
-start_btn.grid(row=0, column=0, padx=5)
+def main():
+    global tray_icon
 
-# Stop button
-stop_btn = tk.Button(btn_frame, text="Stop", width=10, command=stop_listener)
-stop_btn.grid(row=0, column=1, padx=5)
+    menu = pystray.Menu(
+        pystray.MenuItem(update_icon_text, None, enabled=True),
+        pystray.Menu.SEPARATOR,
+        pystray.MenuItem("Start", start_listener, enabled=start_enabled),
+        pystray.MenuItem("Stop", stop_listener, enabled=stop_enabled),
+        pystray.MenuItem("Refresh", refresh, enabled=True),
+        pystray.Menu.SEPARATOR,
+        pystray.MenuItem("Exit", exit_action),
+    )
 
-# Refresh button
-refresh_btn = tk.Button(root, text="Refresh", command=refresh)
-refresh_btn.pack(pady=10)
+    tray_icon = pystray.Icon(
+        "hotkey_listener_control",
+        icon=Image.open(ICON_FILE),
+        title=APP_NAME,
+        menu=menu,
+    )
 
-refresh()
-root.mainloop()
+    tray_icon.run()
+
+if __name__ == "__main__":
+    main()

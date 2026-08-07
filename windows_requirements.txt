@@ -5,3 +5,4 @@ psutil
 pyperclip
 openai
 pillow
+pystray
