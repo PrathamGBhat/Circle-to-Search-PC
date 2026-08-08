@@ -1,5 +1,3 @@
-# PENDING: Fix icon behaviour in tray
-
 import os
 import sys
 import time
@@ -23,6 +21,7 @@ PYTHONW = (os.path.join(os.path.dirname(BASE_DIR), "venv", "Scripts", "pythonw.e
 APP_NAME = "Hotkey Listener Control"
 
 tray_icon = None
+is_loading = False # Disables start and stop buttons when loading
 
 def get_running_pid():
 
@@ -53,11 +52,17 @@ def get_running_pid():
     return None
 
 def start_listener(icon=None, item=None):
+    global is_loading
+    pid=get_running_pid()
 
     # Check for pre-existing process with required PID
-    if get_running_pid():
+    if pid:
         notify(icon, "Already running", "The listener is already active.")
         return
+
+    # Enter loading state
+    is_loading = True
+    refresh(icon)
 
     # Start new process
     try:
@@ -73,20 +78,30 @@ def start_listener(icon=None, item=None):
                 stderr=err,
                 stdout=err,
             )
-            refresh(icon)
 
     except Exception as exc:
         log_error("Failed to start the listener process", exc)
         notify(icon, "Start failed", "Could not start the listener. Check log.txt for details.")
         return
 
+    finally:
+        while not(os.path.exists(PID_FILE)):
+            is_loading = True # Loading state till the PID file doesn't exist
+            refresh(icon)
+        is_loading = False
+        refresh(icon)
+
     time.sleep(0.8)
 
 def start_enabled(item=None):
+    global is_loading
+    if is_loading:
+        return False
     pid = get_running_pid()
     return pid is None # True if pid!=None
 
 def stop_listener(icon=None, item=None):
+    global is_loading
     pid = get_running_pid()
 
     # Missing PID
@@ -94,29 +109,48 @@ def stop_listener(icon=None, item=None):
         notify(icon, "Not running", "The listener isn't currently active.")
         return
 
-    # Terminate process
+    # Enter loading state
+    is_loading = True
+    refresh(icon)
+
     try:
+
+        # Terminate process
         psutil.Process(pid).terminate()
         append_log("Listener stopped")
-        refresh(icon)
+
+        # Cleanup PID file
+        if os.path.exists(PID_FILE):
+            os.remove(PID_FILE)
     except psutil.NoSuchProcess:
         pass
+    finally:
 
-    # Cleanup PID file
-    if os.path.exists(PID_FILE):
-        os.remove(PID_FILE)
+        while os.path.exists(PID_FILE):
+            is_loading = True # Loading state till the PID file is not removed
+            refresh(icon)
+        is_loading = False
+        refresh(icon)
 
 def stop_enabled(item=None):
+    global is_loading
+    if is_loading:
+        return False
     pid = get_running_pid()
     return pid is not None # True if pid==None
 
 def refresh(icon=None, item=None):
-    icon.update_menu()
+    if icon is not None:
+        icon.update_menu()
 
 def exit_action(icon, item=None):
     icon.stop()
 
 def update_icon_text(item=None):
+    global is_loading
+    if is_loading:
+        return "Loading..."
+    
     pid = get_running_pid()
     return f"Running (PID {pid})" if pid else "Stopped"
 
