@@ -165,6 +165,11 @@ def notify(icon, title, message):
     append_log(f"{title}: {message}")
 
 def main():
+
+    # Start listener by default on first run
+    start_listener()
+    time.sleep(1)
+
     global tray_icon
 
     menu = pystray.Menu(
