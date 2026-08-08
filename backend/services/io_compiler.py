@@ -69,7 +69,6 @@ def compile_output(answer) -> IOResponse:
     # Response object
     return IOResponse(text=answer)
 
-
 def process(text: str = "", image: Optional[Image.Image] = None) -> IOResponse:
 
     # Accept input and complile request object
