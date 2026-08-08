@@ -1,0 +1,32 @@
+# LiteLLM quickstart stack: Purely config.yml-based functioning without
+# database. Used by: https://docs.litellm.ai/
+# 
+# Edit the litellm_config.yaml file and also add the real API keys before 
+# running compose command
+#
+# Start it with:
+#   docker compose -f docker-compose.yml up -d
+#
+# To edit new models, edit api key, then litellm_config.yaml and then recompose with:
+#
+# docker compose down
+# docker compose up -f docker-compose.yml -d
+#
+# The credentials below are placeholders for local evaluation. Before any real
+# use, download this file and set LITELLM_MASTER_KEY and LITELLM_SALT_KEY to
+# long random values, and pin the image to a release tag instead of `latest`.
+services:
+  litellm:
+    image: docker.litellm.ai/berriai/litellm:latest
+
+    ports:
+      - "4000:4000"
+
+    env_file:
+      - ../../.env
+
+    volumes:
+      - ./litellm_config.yaml:/app/litellm_config.yaml
+
+    command:
+      - "--config=/app/litellm_config.yaml"

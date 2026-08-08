@@ -1,0 +1,7 @@
+# Find the expected model names for model field in litellm_params at https://models.litellm.ai/
+
+model_list:    
+  - model_name: my-gemini-model
+    litellm_params:
+      model: gemini/gemini-3.5-flash
+      api_key: os.environ/GEMINI_API_KEY
