@@ -168,7 +168,8 @@ def main():
 
     # Start listener by default on first run
     start_listener()
-    time.sleep(1)
+    time.sleep(2)
+    refresh()
 
     global tray_icon
 
