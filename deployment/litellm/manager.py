@@ -14,7 +14,7 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 COMPOSE_FILE = os.path.join(BASE_DIR, "docker-compose.yml")
 SERVICE_NAME = "litellm"
-HEALTH_URL = f"{os.getenv("LITELLM_BASE_URL")}/health/liveliness"
+HEALTH_URL = f'{os.getenv("LITELLM_BASE_URL")}/health/liveliness'
 TIMEOUT = 15
 POLL_INTERVAL = 3
 
@@ -76,6 +76,7 @@ def is_healthy_litellm():
     return False
 
 def start_litellm():
+    
     # Already running container
     if is_running_litellm():
         log_error("Container already running")

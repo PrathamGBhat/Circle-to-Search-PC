@@ -9,12 +9,33 @@ from PIL import Image, ImageGrab
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from frontend.overlay import Overlay
 from utils.logging_utils import append_log, log_error
+from deployment.litellm.manager import start_litellm
 
 PID_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "listener.pid")
 HOTKEY = [keyboard.Key.ctrl_l, keyboard.Key.shift_l, keyboard.Key.f9] # Ctrl + Shift + F9 by default
 
 overlay = Overlay()
 current_keys = set() # Track keys pressed
+
+def start_backend_async():
+
+    def _worker():
+        try:
+            start_litellm()
+            thread.success=True
+            thread.error=None
+        except Exception as exc:
+            thread.success = False
+            thread.error = exc
+            log_error("Failed to start the backend", exc)
+            return
+
+    thread = threading.Thread(target=_worker, daemon=True)
+    thread.success = None
+    thread.error = None
+    thread.start()
+
+    return thread
 
 def hotkey_listener():
 
@@ -76,15 +97,8 @@ def on_activate():
         log_error("Failed while handling the hotkey activation", exc)
 
 def cleanup():
+    pass
 
-    # Delete PID file and stop corresponding process if it exists
-    if os.path.exists(PID_FILE):
-        try:
-            with open(PID_FILE) as f:
-                if f.read().strip() == str(os.getpid()):
-                    os.remove(PID_FILE)
-        except Exception:
-            pass
 
 def main():
 
@@ -96,6 +110,16 @@ def main():
         # The keyboard listener runs in background while overlay runs
         listener_thread = threading.Thread(target=hotkey_listener, daemon=True)
         listener_thread.start()
+
+        # Start backend
+        backend_thread = start_backend_async()
+        backend_thread.join()
+
+        if backend_thread.success:
+            append_log("Backend started")
+        else:
+            log_error("Failed to start the backend", backend_thread.error)
+
         overlay.run()
 
     finally:

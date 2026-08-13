@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import threading
 import subprocess
 
 import psutil
@@ -64,8 +65,9 @@ def start_listener(icon=None, item=None):
     is_loading = True
     refresh(icon)
 
-    # Start new process
     try:
+
+        # Start new process
         with open(LOG_FILE, "a", encoding="utf-8") as err:
 
             CREATE_NO_WINDOW = 0x08000000 # Don't open command prompt
@@ -81,7 +83,7 @@ def start_listener(icon=None, item=None):
 
     except Exception as exc:
         log_error("Failed to start the listener process", exc)
-        notify(icon, "Start failed", "Could not start the listener. Check log.txt for details.")
+        notify(icon, "Start failed", "Could not start the listener.")
         return
 
     finally:
@@ -99,6 +101,27 @@ def start_enabled(item=None):
         return False
     pid = get_running_pid()
     return pid is None # True if pid!=None
+
+def stop_backend_async():
+    def _worker():
+        try:
+            from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+
+            stop_litellm()
+            thread.success=True
+            thread.error=None
+        except Exception as exc:
+            thread.success = False
+            thread.error = exc
+            log_error("Failed to stop the backend", exc)
+            return
+
+    thread = threading.Thread(target=_worker, daemon=True)
+    thread.success = None
+    thread.error = None
+    thread.start()
+
+    return thread
 
 def stop_listener(icon=None, item=None):
     global is_loading
@@ -122,15 +145,24 @@ def stop_listener(icon=None, item=None):
         # Cleanup PID file
         if os.path.exists(PID_FILE):
             os.remove(PID_FILE)
+
     except psutil.NoSuchProcess:
         pass
     finally:
-
         while os.path.exists(PID_FILE):
             is_loading = True # Loading state till the PID file is not removed
             refresh(icon)
         is_loading = False
         refresh(icon)
+
+        # Stop backend
+        backend_thread = stop_backend_async()
+        backend_thread.join()
+
+        if backend_thread.success:
+            append_log("Backend stopped")
+        else:
+            log_error("Failed to stop the backend", backend_thread.error)
 
 def stop_enabled(item=None):
     global is_loading
@@ -169,7 +201,6 @@ def main():
     # Start listener by default on first run
     start_listener()
     time.sleep(2)
-    refresh()
 
     global tray_icon
 
@@ -190,6 +221,7 @@ def main():
         menu=menu,
     )
 
+    refresh() # To reflect the started listener script
     tray_icon.run()
 
 if __name__ == "__main__":

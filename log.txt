@@ -1,142 +1,339 @@
-[2026-08-12 17:30:56]
-Process started with PID: 21640
-[2026-08-12 20:43:02]
-Process started with PID: 10300
-[2026-08-13 10:32:39]
-Process started with PID: 16344
-[2026-08-13 10:46:17]
+[2026-08-13 13:42:52]
+Listener stopped
+[2026-08-13 13:42:57]
+Process started with PID: 20664
+[2026-08-13 13:42:58]
+Successful - LiteLLM running
+[2026-08-13 13:42:58]
+ERROR: Container already running
+[2026-08-13 13:42:58]
+Backend started
+[2026-08-13 13:44:50]
+Listener stopped
+[2026-08-13 13:45:01]
+Process started with PID: 8416
+[2026-08-13 13:45:01]
+Successful - LiteLLM running
+[2026-08-13 13:45:01]
+Starting 'litellm' container...
+[2026-08-13 13:45:01]
+Successful - LiteLLM started
+[2026-08-13 13:45:01]
+Backend started
+[2026-08-13 13:55:28]
+Already running: The listener is already active.
+[2026-08-13 13:55:33]
+Listener stopped
+[2026-08-13 13:55:34]
+Successful - LiteLLM exists
+[2026-08-13 13:55:34]
+Successful - LiteLLM running
+[2026-08-13 13:55:34]
+Stopping 'litellm' container...
+[2026-08-13 13:55:36]
+Successful - LiteLLM stopped
+[2026-08-13 13:55:36]
+Backend stopped
+[2026-08-13 14:00:59]
+Process started with PID: 15520
+[2026-08-13 14:01:00]
+Successful - LiteLLM running
+[2026-08-13 14:01:00]
+Starting 'litellm' container...
+[2026-08-13 14:01:01]
+Successful - LiteLLM started
+[2026-08-13 14:01:01]
+Backend started
+[2026-08-13 14:09:12]
+Process started with PID: 18132
+[2026-08-13 14:09:14]
+Successful - LiteLLM running
+[2026-08-13 14:09:14]
+Starting 'litellm' container...
+[2026-08-13 14:09:18]
+Successful - LiteLLM started
+[2026-08-13 14:09:18]
+Backend started
+[2026-08-13 14:09:21]
 No image on clipboard
-[2026-08-13 10:46:17]
-Text found on clipboard
-[2026-08-13 10:46:17]
+[2026-08-13 14:09:21]
+No text on clipboard
+[2026-08-13 14:09:21]
 Overlay opened
-[2026-08-13 10:46:22]
+[2026-08-13 14:09:29]
+No image on clipboard
+[2026-08-13 14:09:29]
+Text found on clipboard
+[2026-08-13 14:09:29]
+Overlay opened
+[2026-08-13 14:09:33]
 Send clicked, sending to backend
-[2026-08-13 10:46:22]
+[2026-08-13 14:09:33]
 Query sent
-[2026-08-13 10:46:31]
+[2026-08-13 14:09:46]
+ERROR: Model client request failed
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 136, in handle_request
+    raise exc
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 231, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1065, in request
+    response = self._send_request(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_client.py", line 483, in _send_request
+    response = self._send_with_auth_retry(request, stream=stream, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_client.py", line 461, in _send_with_auth_retry
+    response = super()._send_request(request, stream=stream, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 990, in _send_request
+    return self._client.send(request, stream=stream, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\backend\client.py", line 52, in send_to_backend
+    response = client.responses.create(
+        model=model,
+        input=_build_input(text, image_b64, image_format)
+        )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\resources\responses\responses.py", line 1004, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/responses",
+        ^^^^^^^^^^^^^
+    ...<47 lines>...
+        stream_cls=Stream[ResponseStreamEvent],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1360, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1100, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+[2026-08-13 14:10:39]
+Listener stopped
+[2026-08-13 14:10:39]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 6, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-13 14:10:39]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 6, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-13 14:10:44]
+Process started with PID: 2376
+[2026-08-13 14:10:45]
+Successful - LiteLLM running
+[2026-08-13 14:10:45]
+ERROR: Container already running
+[2026-08-13 14:10:45]
+Backend started
+[2026-08-13 14:10:53]
+No image on clipboard
+[2026-08-13 14:10:53]
+Text found on clipboard
+[2026-08-13 14:10:53]
+Overlay opened
+[2026-08-13 14:10:55]
+Send clicked, sending to backend
+[2026-08-13 14:10:55]
+Query sent
+[2026-08-13 14:11:04]
 Response received
-[2026-08-13 10:46:31]
+[2026-08-13 14:11:04]
+Q: python-dotenv
+A: **`python-dotenv`** is a popular Python library that reads key-value pairs from a `.env` file and sets them as environment variables. 
+
+It is widely used to store sensitive information (like API keys, database passwords, and configuration settings) separately from your source code, following the **12-Factor App** methodology.
+
+---
+
+### 1. Installation
+
+You can install it using `pip`:
+
+```bash
+pip install python-dotenv
+```
+
+---
+
+### 2. Basic Usage
+
+#### Step A: Create a `.env` file
+In the root directory of your project, create a file named `.env` (no prefix, just the extension) and add your variables:
+
+```env
+# .env file
+API_KEY=your_secret_api_key_here
+DATABASE_URL=postgresql://user:password@localhost:5432/mydb
+DEBUG=True
+PORT=8000
+```
+
+#### Step B: Load variables in Python
+In your Python script, import `load_dotenv` and use `os.environ` to access the variables:
+
+```python
+import os
+from dotenv import load_dotenv
+
+# Load the environment variables from the .env file
+load_dotenv()
+
+# Access the variables
+api_key = os.getenv("API_KEY")
+db_url = os.getenv("DATABASE_URL")
+port = os.getenv("PORT")
+
+print(f"API Key: {api_key}")
+print(f"Database URL: {db_url}")
+print(f"Port: {port} (Type: {type(port)})") # Note: Environment variables are always strings!
+```
+
+---
+
+### 3. Key Features & Advanced Usage
+
+#### Feature A: Do Not Override Existing System Variables (Default)
+By default, `load_dotenv()` **will not** overwrite existing system environment variables. If you want to force it to overwrite them, use `override=True`:
+
+```python
+load_dotenv(override=True)
+```
+
+#### Feature B: Custom `.env` File Path
+If your `.env` file is in a different directory or has a different name (e.g., `.env.dev`), you can specify the path:
+
+```python
+from pathlib import Path
+from dotenv import load_dotenv
+
+env_path = Path('.') / '.env.dev'
+load_dotenv(dotenv_path=env_path)
+```
+
+#### Feature C: Variable Expansion (Referencing other variables)
+`python-dotenv` supports referencing other variables inside your `.env` file:
+
+```env
+DOMAIN=example.com
+EMAIL_SUPPORT=support@${DOMAIN}
+```
+If you load this, `EMAIL_SUPPORT` will automatically resolve to `support@example.com`.
+
+---
+
+### 4. Best Practices (Crucial for Security)
+
+1. **NEVER commit your `.env` file to GitHub/Git.**
+   Add `.env` to your `.gitignore` file immediately.
+   ```text
+   # .gitignore
+   .env
+   ```
+
+2. **Create a `.env.example` file.**
+   Since you aren't committing `.env`, create a template file called `.env.example` containing the keys but placeholder values. Commit this to Git so other developers know what variables are required.
+   ```env
+   # .env.example
+   API_KEY=your_api_key_here
+   DATABASE_URL=your_database_url_here
+   ```
+
+3. **Convert Types:**
+   Remember that `os.getenv()` always returns a **string**. If you need an integer or boolean, you must convert it manually:
+   ```python
+   DEBUG = os.getenv("DEBUG") == "True"
+   PORT = int(os.getenv("PORT", 8000)) # 8000 is the default value
+   ```
+---
+[2026-08-13 14:14:59]
+Process started with PID: 18268
+[2026-08-13 14:14:59]
+Successful - LiteLLM running
+[2026-08-13 14:14:59]
+Starting 'litellm' container...
+[2026-08-13 14:15:00]
+Successful - LiteLLM started
+[2026-08-13 14:15:00]
+Backend started
+[2026-08-13 14:16:47]
+No image on clipboard
+[2026-08-13 14:16:47]
+No text on clipboard
+[2026-08-13 14:16:47]
+Overlay opened
+[2026-08-13 14:16:53]
+Send clicked, sending to backend
+[2026-08-13 14:16:53]
+Query sent
+[2026-08-13 14:17:01]
+Response received
+[2026-08-13 14:17:01]
 Q: hello
 A: Hello! How can I help you today?
 ---
-[2026-08-13 10:46:44]
-Already running: The listener is already active.
-[2026-08-13 10:46:48]
-Listener stopped
-[2026-08-13 10:47:16]
-Process started with PID: 19576
-[2026-08-13 10:47:20]
-Already running: The listener is already active.
-[2026-08-13 10:47:31]
-Listener stopped
-[2026-08-13 10:47:36]
-Process started with PID: 18944
-[2026-08-13 10:48:00]
-No image on clipboard
-[2026-08-13 10:48:00]
-Text found on clipboard
-[2026-08-13 10:48:00]
-Overlay opened
-[2026-08-13 10:48:04]
-Send clicked, sending to backend
-[2026-08-13 10:48:04]
-Query sent
-[2026-08-13 10:48:13]
-Response received
-[2026-08-13 10:48:13]
-Q: LITELLM_BASE_URL
-A: **`LITELLM_BASE_URL`** is an environment variable used in **LiteLLM** (a popular library that standardizes LLM APIs to the OpenAI format). 
-
-It is used to direct your LLM requests to a **custom API endpoint** instead of the default provider endpoints (like official OpenAI or Anthropic servers).
-
-Here is a complete guide on what it is, when to use it, and how to set it.
-
----
-
-### 1. When do you need `LITELLM_BASE_URL`?
-You use this variable when you are hosting your own models or using an alternative API gateway. Common scenarios include:
-* **Local LLMs:** Running models locally via **Ollama**, **LM Studio**, **Llama.cpp**, or **LocalAI**.
-* **Self-Hosted Inference Engines:** Running models on your own servers using **vLLM**, **TGI (Text Generation Inference)**, or **Trisiton**.
-* **LiteLLM Proxy:** Pointing your application to a central LiteLLM Proxy Server deployed in your company.
-* **Third-Party Providers:** Using OpenAI-compatible APIs like **DeepSeek**, **Together AI**, or **Anyscale**.
-
----
-
-### 2. How to set it
-
-#### Method A: In your Terminal (Temporary)
-```bash
-export LITELLM_BASE_URL="http://localhost:4000"  # Example: LiteLLM Proxy
-# or
-export LITELLM_BASE_URL="http://localhost:11434" # Example: Ollama
-```
-
-#### Method B: In a `.env` file (Recommended)
-Create a `.env` file in your project root:
-```env
-LITELLM_BASE_URL="http://localhost:8000/v1"
-```
-
-#### Method C: Programmatically in Python
-You can set it directly in your Python code:
-```python
-import os
-import litellm
-
-# Set the environment variable
-os.environ["LITELLM_BASE_URL"] = "http://localhost:8000/v1"
-
-# Or pass it directly as `api_base` in the function call
-response = litellm.completion(
-    model="openai/vicuna", # prefix with provider
-    messages=[{"role": "user", "content": "Hello!"}],
-    api_base="http://localhost:8000/v1" 
-)
-```
-
----
-
-### 3. Common Configurations
-
-#### 1. Ollama (Local)
-If you are running Ollama locally:
-* **URL:** `http://localhost:11434`
-* **Python Example:**
-  ```python
-  import litellm
-  response = litellm.completion(
-      model="ollama/llama3",
-      messages=[{"role": "user", "content": "Hi"}],
-      api_base="http://localhost:11434"
-  )
-  ```
-
-#### 2. vLLM (Self-hosted)
-If you are running a vLLM server:
-* **URL:** `http://<your-server-ip>:8000/v1`
-* **Python Example:**
-  ```python
-  import litellm
-  response = litellm.completion(
-      model="openai/meta-llama/Meta-Llama-3-8B-Instruct",
-      messages=[{"role": "user", "content": "Hi"}],
-      api_base="http://localhost:8000/v1"
-  )
-  ```
-
-#### 3. LiteLLM Proxy Server
-If you are running the LiteLLM proxy CLI (`litellm --model ollama/llama3`):
-* **URL:** `http://0.0.0.0:4000` (default)
-
----
-
-### Difference between `LITELLM_BASE_URL` and `OPENAI_API_BASE`
-While both do similar things, **`LITELLM_BASE_URL`** is the global override for the LiteLLM package itself. If you are using LiteLLM specifically to talk to an OpenAI-compatible endpoint, setting `OPENAI_API_BASE` will also work, but `LITELLM_BASE_URL` is preferred when routing all LiteLLM traffic through a proxy.
----
-[2026-08-13 10:50:58]
-Already running: The listener is already active.
-[2026-08-13 10:51:03]
-Listener stopped
-[2026-08-13 10:51:07]
-Process started with PID: 15900

@@ -6,3 +6,4 @@ pyperclip
 openai
 pillow
 pystray
+python-dotenv
