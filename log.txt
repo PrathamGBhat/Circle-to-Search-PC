@@ -1,0 +1,142 @@
+[2026-08-12 17:30:56]
+Process started with PID: 21640
+[2026-08-12 20:43:02]
+Process started with PID: 10300
+[2026-08-13 10:32:39]
+Process started with PID: 16344
+[2026-08-13 10:46:17]
+No image on clipboard
+[2026-08-13 10:46:17]
+Text found on clipboard
+[2026-08-13 10:46:17]
+Overlay opened
+[2026-08-13 10:46:22]
+Send clicked, sending to backend
+[2026-08-13 10:46:22]
+Query sent
+[2026-08-13 10:46:31]
+Response received
+[2026-08-13 10:46:31]
+Q: hello
+A: Hello! How can I help you today?
+---
+[2026-08-13 10:46:44]
+Already running: The listener is already active.
+[2026-08-13 10:46:48]
+Listener stopped
+[2026-08-13 10:47:16]
+Process started with PID: 19576
+[2026-08-13 10:47:20]
+Already running: The listener is already active.
+[2026-08-13 10:47:31]
+Listener stopped
+[2026-08-13 10:47:36]
+Process started with PID: 18944
+[2026-08-13 10:48:00]
+No image on clipboard
+[2026-08-13 10:48:00]
+Text found on clipboard
+[2026-08-13 10:48:00]
+Overlay opened
+[2026-08-13 10:48:04]
+Send clicked, sending to backend
+[2026-08-13 10:48:04]
+Query sent
+[2026-08-13 10:48:13]
+Response received
+[2026-08-13 10:48:13]
+Q: LITELLM_BASE_URL
+A: **`LITELLM_BASE_URL`** is an environment variable used in **LiteLLM** (a popular library that standardizes LLM APIs to the OpenAI format). 
+
+It is used to direct your LLM requests to a **custom API endpoint** instead of the default provider endpoints (like official OpenAI or Anthropic servers).
+
+Here is a complete guide on what it is, when to use it, and how to set it.
+
+---
+
+### 1. When do you need `LITELLM_BASE_URL`?
+You use this variable when you are hosting your own models or using an alternative API gateway. Common scenarios include:
+* **Local LLMs:** Running models locally via **Ollama**, **LM Studio**, **Llama.cpp**, or **LocalAI**.
+* **Self-Hosted Inference Engines:** Running models on your own servers using **vLLM**, **TGI (Text Generation Inference)**, or **Trisiton**.
+* **LiteLLM Proxy:** Pointing your application to a central LiteLLM Proxy Server deployed in your company.
+* **Third-Party Providers:** Using OpenAI-compatible APIs like **DeepSeek**, **Together AI**, or **Anyscale**.
+
+---
+
+### 2. How to set it
+
+#### Method A: In your Terminal (Temporary)
+```bash
+export LITELLM_BASE_URL="http://localhost:4000"  # Example: LiteLLM Proxy
+# or
+export LITELLM_BASE_URL="http://localhost:11434" # Example: Ollama
+```
+
+#### Method B: In a `.env` file (Recommended)
+Create a `.env` file in your project root:
+```env
+LITELLM_BASE_URL="http://localhost:8000/v1"
+```
+
+#### Method C: Programmatically in Python
+You can set it directly in your Python code:
+```python
+import os
+import litellm
+
+# Set the environment variable
+os.environ["LITELLM_BASE_URL"] = "http://localhost:8000/v1"
+
+# Or pass it directly as `api_base` in the function call
+response = litellm.completion(
+    model="openai/vicuna", # prefix with provider
+    messages=[{"role": "user", "content": "Hello!"}],
+    api_base="http://localhost:8000/v1" 
+)
+```
+
+---
+
+### 3. Common Configurations
+
+#### 1. Ollama (Local)
+If you are running Ollama locally:
+* **URL:** `http://localhost:11434`
+* **Python Example:**
+  ```python
+  import litellm
+  response = litellm.completion(
+      model="ollama/llama3",
+      messages=[{"role": "user", "content": "Hi"}],
+      api_base="http://localhost:11434"
+  )
+  ```
+
+#### 2. vLLM (Self-hosted)
+If you are running a vLLM server:
+* **URL:** `http://<your-server-ip>:8000/v1`
+* **Python Example:**
+  ```python
+  import litellm
+  response = litellm.completion(
+      model="openai/meta-llama/Meta-Llama-3-8B-Instruct",
+      messages=[{"role": "user", "content": "Hi"}],
+      api_base="http://localhost:8000/v1"
+  )
+  ```
+
+#### 3. LiteLLM Proxy Server
+If you are running the LiteLLM proxy CLI (`litellm --model ollama/llama3`):
+* **URL:** `http://0.0.0.0:4000` (default)
+
+---
+
+### Difference between `LITELLM_BASE_URL` and `OPENAI_API_BASE`
+While both do similar things, **`LITELLM_BASE_URL`** is the global override for the LiteLLM package itself. If you are using LiteLLM specifically to talk to an OpenAI-compatible endpoint, setting `OPENAI_API_BASE` will also work, but `LITELLM_BASE_URL` is preferred when routing all LiteLLM traffic through a proxy.
+---
+[2026-08-13 10:50:58]
+Already running: The listener is already active.
+[2026-08-13 10:51:03]
+Listener stopped
+[2026-08-13 10:51:07]
+Process started with PID: 15900

@@ -3,16 +3,18 @@ import sys
 import time
 import subprocess
 
+from dotenv import load_dotenv
 import requests
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from utils.logging_utils import append_log, log_error
+load_dotenv()
 
 # Global config
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 COMPOSE_FILE = os.path.join(BASE_DIR, "docker-compose.yml")
 SERVICE_NAME = "litellm"
-HEALTH_URL = "http://localhost:4000/health/liveliness"
+HEALTH_URL = f"{os.getenv("LITELLM_BASE_URL")}/health/liveliness"
 TIMEOUT = 15
 POLL_INTERVAL = 3
 

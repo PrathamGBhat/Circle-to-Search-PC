@@ -2,16 +2,18 @@ import os
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
 from openai import OpenAI
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.logging_utils import append_log, log_error
+load_dotenv()
 
 VISION_MODEL = "my-gemini-model"
 
 client = OpenAI(
-    api_key="sk-1234", 
-    base_url="http://localhost:4000"
+    api_key=os.getenv("LITELLM_MASTER_KEY"), 
+    base_url=os.getenv("LITELLM_BASE_URL")
 )
 
 def _build_input(text, image_b64, image_format):
