@@ -3,12 +3,14 @@ import sys
 import threading
 
 import tkinter as tk
-from tkinter import scrolledtext
+from tkinter import ttk, scrolledtext
 from PIL import Image, ImageTk
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from backend.services.io_compiler import process as compile_and_send
-from backend.services.config_manager import ConfigRequest, PROVIDERS, save_configuration
+from backend.services.config_manager import (
+    ConfigRequest, HotkeyRequest, PROVIDERS, save_configuration, save_hotkey,
+)
 from utils.logging_utils import append_log, log_error
 
 # Default popup size and offset from the cursor position
@@ -27,7 +29,27 @@ CLIPBOARD_COUNTDOWN_SECONDS = 3
 
 # Settings panel geometry
 SETTINGS_WINDOW_WIDTH = 360
-SETTINGS_WINDOW_HEIGHT = 260
+SETTINGS_WINDOW_HEIGHT = 420
+
+# Placeholder shown for the hotkey field until the user records a new combo.
+# Purely informational here - it just mirrors listener.py's current default
+# (windows/listener.py HOTKEY) and isn't read from anywhere live.
+DEFAULT_HOTKEY_DISPLAY = "Ctrl+Shift+F9 (current default)"
+
+# Tk keysyms treated as modifiers - held-only combos don't finalize a
+# capture, so a release of just Ctrl/Shift/etc. doesn't end recording.
+MODIFIER_KEYSYMS = {
+    "Control_L", "Control_R", "Shift_L", "Shift_R",
+    "Alt_L", "Alt_R", "Super_L", "Super_R",
+}
+
+# Friendlier labels for modifier keysyms in the on-screen combo display.
+HOTKEY_DISPLAY_LABELS = {
+    "Control_L": "Ctrl", "Control_R": "Ctrl",
+    "Shift_L": "Shift", "Shift_R": "Shift",
+    "Alt_L": "Alt", "Alt_R": "Alt",
+    "Super_L": "Win", "Super_R": "Win",
+}
 
 class Overlay:
 
@@ -76,6 +98,15 @@ class Overlay:
         self.settings_model_name_entry = None
         self.settings_save_btn = None
         self.settings_status_label = None
+
+        # Hotkey-recording section of the settings panel
+        self.settings_hotkey_entry_var = None
+        self.settings_hotkey_record_btn = None
+        self.settings_hotkey_save_btn = None
+        self.settings_hotkey_status_label = None
+        self._hotkey_capturing = False
+        self._hotkey_capture_keys = []  # ordered, de-duped keysyms for the combo in progress
+        self._hotkey_previous_display = DEFAULT_HOTKEY_DISPLAY
 
     def send(self, image=None, text=None):
         self.root.after(0, self._prepare_for_input, image, text)
@@ -463,6 +494,43 @@ class Overlay:
         self.settings_status_label = tk.Label(form, text="", anchor="w", justify="left", wraplength=SETTINGS_WINDOW_WIDTH - 24)
         self.settings_status_label.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(8, 0))
 
+        # --- Global hotkey -------------------------------------------------
+        ttk.Separator(form, orient="horizontal").grid(
+            row=7, column=0, columnspan=2, sticky="ew", pady=(14, 10)
+        )
+
+        tk.Label(form, text="Global hotkey", font=("TkDefaultFont", 9, "bold")).grid(
+            row=8, column=0, columnspan=2, sticky="w", pady=(0, 8)
+        )
+
+        tk.Label(form, text="Current combo").grid(row=9, column=0, sticky="w", pady=(0, 8))
+        self.settings_hotkey_entry_var = tk.StringVar(value=self._hotkey_previous_display)
+        hotkey_entry = tk.Entry(form, textvariable=self.settings_hotkey_entry_var, state="readonly")
+        hotkey_entry.grid(row=9, column=1, sticky="ew", pady=(0, 8))
+
+        hotkey_btn_row = tk.Frame(form)
+        hotkey_btn_row.grid(row=10, column=0, columnspan=2, sticky="e", pady=(0, 4))
+        self.settings_hotkey_record_btn = tk.Button(
+            hotkey_btn_row, text="Record", command=self._on_hotkey_record
+        )
+        self.settings_hotkey_record_btn.pack(side=tk.LEFT, padx=(0, 6))
+        self.settings_hotkey_save_btn = tk.Button(
+            hotkey_btn_row, text="Save hotkey", state="disabled", command=self._on_save_hotkey
+        )
+        self.settings_hotkey_save_btn.pack(side=tk.LEFT)
+
+        hotkey_hint = tk.Label(
+            form,
+            text="Click Record, then press your new combo and release it.",
+            anchor="w", font=("TkDefaultFont", 8), fg="gray30",
+        )
+        hotkey_hint.grid(row=11, column=0, columnspan=2, sticky="w", pady=(0, 4))
+
+        self.settings_hotkey_status_label = tk.Label(
+            form, text="", anchor="w", justify="left", wraplength=SETTINGS_WINDOW_WIDTH - 24
+        )
+        self.settings_hotkey_status_label.grid(row=12, column=0, columnspan=2, sticky="ew", pady=(4, 0))
+
     def _on_settings_unlock_check(self):
         # Unlocks custom_model_name/model_name/Save as soon as a provider
         # is picked and *something* is typed as the API key. The key
@@ -522,3 +590,127 @@ class Overlay:
             self.settings_status_label.configure(text=result.message or "Configuration set", fg="green")
         else:
             self.settings_status_label.configure(text=result.error or "Failed to save configuration", fg="red")
+
+    # ------------------------------------------------------------------
+    # Hotkey recording
+    #
+    # Flow: user clicks Record, then presses the desired key combo. Every
+    # key pressed while recording is added to the combo (and shown live);
+    # the combo finalizes on the first key release that isn't just a
+    # modifier being let go, so "hold Ctrl+Shift, tap F9, release" works
+    # the way most hotkey recorders behave. Escape cancels and restores
+    # whatever was shown before. Save Hotkey then hands the captured keys
+    # to config_manager.save_hotkey(), which for now just confirms receipt.
+    # ------------------------------------------------------------------
+
+    def _on_hotkey_record(self):
+        self._hotkey_capturing = True
+        self._hotkey_capture_keys = []
+        self._hotkey_previous_display = self.settings_hotkey_entry_var.get()
+
+        self.settings_hotkey_entry_var.set("Press keys... (Esc to cancel)")
+        self.settings_hotkey_record_btn.configure(state="disabled")
+        self.settings_hotkey_save_btn.configure(state="disabled")
+        self.settings_hotkey_status_label.configure(
+            text="Recording - press your new combo, then release", fg="black"
+        )
+
+        self.settings_window.bind("<KeyPress>", self._on_hotkey_keypress)
+        self.settings_window.bind("<KeyRelease>", self._on_hotkey_keyrelease)
+
+    def _on_hotkey_keypress(self, event):
+        if not self._hotkey_capturing:
+            return
+
+        if event.keysym == "Escape":
+            self._cancel_hotkey_capture()
+            return
+
+        if event.keysym not in self._hotkey_capture_keys:
+            self._hotkey_capture_keys.append(event.keysym)
+        self.settings_hotkey_entry_var.set(self._format_hotkey_display(self._hotkey_capture_keys))
+
+    def _on_hotkey_keyrelease(self, event):
+        if not self._hotkey_capturing:
+            return
+
+        # Only finalize once at least one non-modifier key has been part
+        # of the combo - releasing a lone Ctrl/Shift/Alt while still
+        # building the combo shouldn't end recording early.
+        has_non_modifier = any(k not in MODIFIER_KEYSYMS for k in self._hotkey_capture_keys)
+        if has_non_modifier:
+            self._finalize_hotkey_capture()
+
+    def _finalize_hotkey_capture(self):
+        self._hotkey_capturing = False
+        self.settings_window.unbind("<KeyPress>")
+        self.settings_window.unbind("<KeyRelease>")
+        self.settings_hotkey_record_btn.configure(state="normal")
+
+        if self._hotkey_capture_keys:
+            self.settings_hotkey_save_btn.configure(state="normal")
+            self.settings_hotkey_status_label.configure(
+                text="New combo captured - press Save hotkey to confirm", fg="black"
+            )
+        else:
+            self.settings_hotkey_entry_var.set(self._hotkey_previous_display)
+            self.settings_hotkey_status_label.configure(text="No keys captured", fg="red")
+
+    def _cancel_hotkey_capture(self):
+        self._hotkey_capturing = False
+        self.settings_window.unbind("<KeyPress>")
+        self.settings_window.unbind("<KeyRelease>")
+        self._hotkey_capture_keys = []
+        self.settings_hotkey_entry_var.set(self._hotkey_previous_display)
+        self.settings_hotkey_record_btn.configure(state="normal")
+        self.settings_hotkey_status_label.configure(text="Cancelled", fg="black")
+
+    def _format_hotkey_display(self, keys):
+        parts = [
+            HOTKEY_DISPLAY_LABELS.get(key, key.upper() if len(key) == 1 else key)
+            for key in keys
+        ]
+        return "+".join(parts)
+
+    def _on_save_hotkey(self):
+        if not self._hotkey_capture_keys:
+            self.settings_hotkey_status_label.configure(
+                text="Record a new combo before saving.", fg="red"
+            )
+            return
+
+        request = HotkeyRequest(keys=list(self._hotkey_capture_keys))
+
+        self.settings_hotkey_save_btn.configure(state="disabled")
+        self.settings_hotkey_status_label.configure(text="Saving hotkey...", fg="black")
+        append_log("Settings Save hotkey clicked, sending hotkey to config_manager")
+
+        threading.Thread(
+            target=self._send_hotkey_to_config_manager, args=(request,), daemon=True
+        ).start()
+
+    def _send_hotkey_to_config_manager(self, request):
+        try:
+            result = save_hotkey(request)
+            self.root.after(0, self._on_hotkey_save_done, result)
+        except Exception as exc:
+            log_error("Overlay failed while calling config_manager for hotkey", exc)
+            self.root.after(0, self._on_hotkey_save_done, None)
+
+    def _on_hotkey_save_done(self, result):
+        self.settings_hotkey_save_btn.configure(state="normal")
+
+        if result is None:
+            self.settings_hotkey_status_label.configure(
+                text="Error - check log for details", fg="red"
+            )
+            return
+
+        if result.ok:
+            self.settings_hotkey_status_label.configure(text=result.message or "Hotkey set", fg="green")
+            # Reflect the confirmed combo as the new "current" value shown
+            # in the readonly field once it's actually accepted.
+            self._hotkey_previous_display = self._format_hotkey_display(self._hotkey_capture_keys)
+            self.settings_hotkey_entry_var.set(self._hotkey_previous_display)
+        else:
+            self.settings_hotkey_status_label.configure(text=result.error or "Failed to save hotkey", fg="red")

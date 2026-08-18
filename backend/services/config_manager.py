@@ -7,12 +7,12 @@ from utils.logging_utils import append_log, log_error
 # the env var name their key will eventually be written under in .env.
 # Keep this in sync with .env.example.
 PROVIDERS = {
-    "Groq": "GROQ_API_KEY",
-    "OpenAI": "OPENAI_API_KEY",
-    "Anthropic": "ANTHROPIC_API_KEY",
-    "Gemini": "GEMINI_API_KEY",
-    "DeepSeek": "DEEPSEEK_API_KEY",
-    "Mistral": "MISTRAL_API_KEY",
+    "groq": "GROQ_API_KEY",
+    "openai": "OPENAI_API_KEY",
+    "anthropic": "ANTHROPIC_API_KEY",
+    "gemini": "GEMINI_API_KEY",
+    "deepseek": "DEEPSEEK_API_KEY",
+    "mistral": "MISTRAL_API_KEY",
     "OpenRouter": "OPENROUTER_API_KEY",
 }
 
@@ -88,3 +88,52 @@ def save_configuration(request: ConfigRequest) -> ConfigResult:
     # TODO: steps 1-4 above go here.
 
     return ConfigResult(ok=True, message="Configuration received (not yet persisted)")
+
+
+@dataclass
+class HotkeyRequest:
+
+    # Ordered list of key identifiers captured by the overlay's hotkey
+    # recorder, e.g. ["Control_L", "Shift_L", "F9"]. These are raw Tk
+    # keysyms for now - whatever normalization/mapping to pynput's Key
+    # names (as used by windows/listener.py's HOTKEY constant) happens is
+    # left for the real implementation.
+    keys: list = None
+
+    def __post_init__(self):
+        if self.keys is None:
+            self.keys = []
+
+    @property
+    def is_complete(self) -> bool:
+        return bool(self.keys)
+
+
+def save_hotkey(request: HotkeyRequest) -> ConfigResult:
+    """
+    Entry point overlay.py calls when the user records and saves a new
+    global hotkey combo. Currently a stub, mirroring save_configuration():
+    it just confirms the captured keys arrived intact and logs them.
+
+    The real implementation (next step) will need to:
+      1. Persist the new combo (sqlite, alongside the model config, or a
+         small dedicated hotkey config file)
+      2. Get windows/listener.py's running HOTKEY updated to match - since
+         the listener process owns the pynput keyboard.Listener, this
+         likely means either restarting the listener process or adding a
+         "reload hotkey" signal it can pick up without a full restart
+      3. Return success/failure for the overlay to display
+    """
+
+    if not request.is_complete:
+        log_error(f"config_manager received an empty hotkey request: {request}")
+        return ConfigResult(ok=False, message="No hotkey captured")
+
+    append_log(
+        "config_manager received hotkey submission:",
+        f"  keys = {' + '.join(request.keys)}",
+    )
+
+    # TODO: steps 1-2 above go here.
+
+    return ConfigResult(ok=True, message=f"Hotkey set to {' + '.join(request.keys)} (not yet persisted)")
