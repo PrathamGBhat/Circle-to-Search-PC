@@ -8,6 +8,7 @@ from PIL import Image, ImageTk
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from backend.services.io_compiler import process as compile_and_send
+from backend.services.config_manager import ConfigRequest, PROVIDERS, save_configuration
 from utils.logging_utils import append_log, log_error
 
 # Default popup size and offset from the cursor position
@@ -23,6 +24,10 @@ CHAT_THUMB_SIZE = (140, 100)      # image already sent, shown inline in the chat
 
 # How long the user has to decide whether clipboard content gets attached
 CLIPBOARD_COUNTDOWN_SECONDS = 3
+
+# Settings panel geometry
+SETTINGS_WINDOW_WIDTH = 360
+SETTINGS_WINDOW_HEIGHT = 260
 
 class Overlay:
 
@@ -61,6 +66,16 @@ class Overlay:
         self._pending_clipboard_text = None
         self._clipboard_countdown_remaining = 0
         self._clipboard_countdown_after_id = None
+
+        # Settings panel (docker/model config). Built lazily on first open.
+        self.settings_window = None
+        self.settings_provider_var = None
+        self.settings_provider_menu = None
+        self.settings_api_key_entry = None
+        self.settings_custom_model_entry = None
+        self.settings_model_name_entry = None
+        self.settings_save_btn = None
+        self.settings_status_label = None
 
     def send(self, image=None, text=None):
         self.root.after(0, self._prepare_for_input, image, text)
@@ -220,6 +235,14 @@ class Overlay:
         self.window.protocol("WM_DELETE_WINDOW", self._on_close)
         self.window.pack_propagate(False)
 
+        # Top bar - just holds the settings button for now.
+        top_frame = tk.Frame(self.window)
+        top_frame.pack(side=tk.TOP, fill=tk.X, padx=8, pady=(8, 0))
+        settings_btn = tk.Button(
+            top_frame, text="\u2699 Settings", command=self._open_settings
+        )
+        settings_btn.pack(side=tk.RIGHT)
+
         bottom_frame = tk.Frame(self.window)
         bottom_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=8, pady=(4, 8))
         self.bottom_frame = bottom_frame
@@ -366,3 +389,136 @@ class Overlay:
 
         self.status_label.configure(text=status_message)
         self.send_btn.configure(state="normal")
+
+    # ------------------------------------------------------------------
+    # Settings panel (docker/model config)
+    #
+    # Flow: user picks a provider from the dropdown and types an API key.
+    # As soon as both are non-empty (the key is NOT validated - a wrong
+    # key still unlocks the rest of the form) the custom model name and
+    # litellm model name fields unlock. Save hands everything to
+    # config_manager.save_configuration(), which for now just confirms it
+    # received the data from here.
+    # ------------------------------------------------------------------
+
+    def _open_settings(self):
+        if self.settings_window is not None and self.settings_window.winfo_exists():
+            self.settings_window.deiconify()
+            self.settings_window.lift()
+            self.settings_window.focus_force()
+            return
+
+        self._create_settings_window()
+
+    def _create_settings_window(self):
+        win = tk.Toplevel(self.root)
+        win.title("Model Configuration")
+        win.geometry(f"{SETTINGS_WINDOW_WIDTH}x{SETTINGS_WINDOW_HEIGHT}")
+        win.resizable(False, False)
+        win.attributes("-topmost", True)
+        win.protocol("WM_DELETE_WINDOW", win.withdraw)
+        self.settings_window = win
+
+        form = tk.Frame(win)
+        form.pack(fill=tk.BOTH, expand=True, padx=12, pady=12)
+        form.columnconfigure(1, weight=1)
+
+        # Model provider dropdown
+        tk.Label(form, text="Model provider").grid(row=0, column=0, sticky="w", pady=(0, 8))
+        self.settings_provider_var = tk.StringVar(value="")
+        self.settings_provider_menu = tk.OptionMenu(
+            form, self.settings_provider_var, *PROVIDERS.keys(),
+            command=lambda _choice: self._on_settings_unlock_check(),
+        )
+        self.settings_provider_menu.grid(row=0, column=1, sticky="ew", pady=(0, 8))
+
+        # API key
+        tk.Label(form, text="API key").grid(row=1, column=0, sticky="w", pady=(0, 8))
+        self.settings_api_key_entry = tk.Entry(form, show="*")
+        self.settings_api_key_entry.grid(row=1, column=1, sticky="ew", pady=(0, 8))
+        self.settings_api_key_entry.bind("<KeyRelease>", lambda _e: self._on_settings_unlock_check())
+
+        # Custom model name (locked until provider + api key are present)
+        tk.Label(form, text="Custom model name").grid(row=2, column=0, sticky="w", pady=(0, 8))
+        self.settings_custom_model_entry = tk.Entry(form, state="disabled")
+        self.settings_custom_model_entry.grid(row=2, column=1, sticky="ew", pady=(0, 8))
+
+        # litellm_params.model name (locked until provider + api key are present)
+        tk.Label(form, text="Model name (litellm)").grid(row=3, column=0, sticky="w", pady=(0, 8))
+        self.settings_model_name_entry = tk.Entry(form, state="disabled")
+        self.settings_model_name_entry.grid(row=3, column=1, sticky="ew", pady=(0, 8))
+
+        hint = tk.Label(
+            form,
+            text="e.g. gemini/gemini-3.5-flash - see models.litellm.ai",
+            anchor="w", font=("TkDefaultFont", 8), fg="gray30",
+        )
+        hint.grid(row=4, column=0, columnspan=2, sticky="w", pady=(0, 8))
+
+        self.settings_save_btn = tk.Button(
+            form, text="Save", state="disabled", command=self._on_save_settings
+        )
+        self.settings_save_btn.grid(row=5, column=0, columnspan=2, sticky="e", pady=(8, 0))
+
+        self.settings_status_label = tk.Label(form, text="", anchor="w", justify="left", wraplength=SETTINGS_WINDOW_WIDTH - 24)
+        self.settings_status_label.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+
+    def _on_settings_unlock_check(self):
+        # Unlocks custom_model_name/model_name/Save as soon as a provider
+        # is picked and *something* is typed as the API key. The key
+        # itself is never validated here - even a wrong key unlocks the
+        # rest of the form, per the intended UX.
+        provider = self.settings_provider_var.get().strip()
+        api_key = self.settings_api_key_entry.get().strip()
+        unlock = bool(provider) and bool(api_key)
+
+        new_state = "normal" if unlock else "disabled"
+        self.settings_custom_model_entry.configure(state=new_state)
+        self.settings_model_name_entry.configure(state=new_state)
+        self.settings_save_btn.configure(state=new_state)
+
+    def _on_save_settings(self):
+        request = ConfigRequest(
+            provider=self.settings_provider_var.get().strip(),
+            api_key=self.settings_api_key_entry.get().strip(),
+            custom_model_name=self.settings_custom_model_entry.get().strip(),
+            model_name=self.settings_model_name_entry.get().strip(),
+        )
+
+        if not request.is_complete:
+            self.settings_status_label.configure(
+                text="Fill in custom model name and model name before saving.", fg="red"
+            )
+            return
+
+        self.settings_save_btn.configure(state="disabled")
+        self.settings_status_label.configure(text="Saving configuration...", fg="black")
+        append_log("Settings Save clicked, sending config to config_manager")
+
+        threading.Thread(
+            target=self._send_settings_to_config_manager, args=(request,), daemon=True
+        ).start()
+
+    def _send_settings_to_config_manager(self, request):
+        try:
+            result = save_configuration(request)
+            self.root.after(0, self._on_settings_save_done, result)
+        except Exception as exc:
+            log_error("Overlay failed while calling config_manager", exc)
+            self.root.after(
+                0, self._on_settings_save_done, None
+            )
+
+    def _on_settings_save_done(self, result):
+        self.settings_save_btn.configure(state="normal")
+
+        if result is None:
+            self.settings_status_label.configure(
+                text="Error - check log for details", fg="red"
+            )
+            return
+
+        if result.ok:
+            self.settings_status_label.configure(text=result.message or "Configuration set", fg="green")
+        else:
+            self.settings_status_label.configure(text=result.error or "Failed to save configuration", fg="red")
