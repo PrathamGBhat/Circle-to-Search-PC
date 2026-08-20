@@ -14,3 +14,10 @@ Actual running
 4. listener.py runs as the background process
 5. Take screenshot from snipping tool and copy image
 6. Ctrl + Shift + F9 to open chat interface
+
+How to add a new api key
+1. First put the api key of provider in .env
+2. Go to litellm_config.yaml and add the new entry similar to existing entries - also make sure to refer to models.litellm.ai for the expected name in litellm.model field
+3. Go to manager.py, uncomment the restart_litellm() line and run manager.py
+4. Go to windows tray icon, stop, start again
+5. Done

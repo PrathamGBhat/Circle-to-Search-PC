@@ -102,4 +102,4 @@ def restart_litellm():
     start_litellm()
     return True
 
-restart_litellm()
+# restart_litellm()
