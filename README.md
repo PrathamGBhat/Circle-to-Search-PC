@@ -8,12 +8,15 @@ Setup docker before running
 4. Start docker instance
 
 Actual running
-1. Run windows/control.pyw
-2. Start process
-3. Can close control.pyw as its a separate process from listener.py
-4. listener.py runs as the background process
-5. Take screenshot from snipping tool and copy image
+1. Create shortcut of control.pyw
+2. Place it in startup apps
+3. Optionally restart your computer or just execute control.pyw
+4. Open your tray icons to see the icon 
+5. Pressing start starts listener.py as the background process listening if you pressed hotkey
 6. Ctrl + Shift + F9 to open chat interface
+7. If you already copied something on your clipboard, it automatically attaches to prompt
+NOTE: Images are supported but make sure you have a vision model in the backend to process those images and also sometimes rate limiting may prevent streaming response
+SUGGESTION: Just use text based groq api key
 
 How to add a new api key
 1. First put the api key of provider in .env
