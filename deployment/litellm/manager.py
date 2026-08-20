@@ -1,10 +1,8 @@
 import os
 import sys
-import time
 import subprocess
 
 from dotenv import load_dotenv
-import requests
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from utils.logging_utils import append_log, log_error
@@ -56,25 +54,6 @@ def is_running_litellm():
     cmd = ["docker", "compose", "-f", COMPOSE_FILE, "ps", "--status", "running", "-q", SERVICE_NAME]
     return _run(cmd, "LiteLLM running")
 
-def is_healthy_litellm():
-    timeout = TIMEOUT
-    deadline = time.time() + timeout
-
-    # Poll health check URL till healthy or timeout
-    while time.time() < deadline:
-        try:
-            response = requests.get(HEALTH_URL, timeout=3)
-            if response.status_code == 200:
-                append_log(f"'{SERVICE_NAME}' container is healthy")
-                return True
-        except requests.RequestException:
-            pass
-
-        time.sleep(POLL_INTERVAL)
-
-    log_error(f"'{SERVICE_NAME}' container did not become healthy within {timeout}s")
-    return False
-
 def start_litellm():
     
     # Already running container
@@ -119,5 +98,8 @@ def restart_litellm():
 
     # Restart container
     append_log(f"Restarting '{SERVICE_NAME}' container...")
-    cmd = ["docker", "compose", "-f", COMPOSE_FILE, "restart", SERVICE_NAME]
-    return _run(cmd, "LiteLLM restarted")
+    stop_litellm()
+    start_litellm()
+    return True
+
+restart_litellm()

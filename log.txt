@@ -1,6 +1,891 @@
-[2026-08-18 21:48:03]
+[2026-08-20 13:31:26]
+Successful - LiteLLM exists
+[2026-08-20 13:31:26]
+Successful - LiteLLM running
+[2026-08-20 13:31:26]
+Restarting 'litellm' container...
+[2026-08-20 13:31:26]
+Successful - LiteLLM exists
+[2026-08-20 13:31:26]
+Successful - LiteLLM running
+[2026-08-20 13:31:26]
+Stopping 'litellm' container...
+[2026-08-20 13:31:29]
+Successful - LiteLLM stopped
+[2026-08-20 13:31:29]
+Successful - LiteLLM running
+[2026-08-20 13:31:29]
+Starting 'litellm' container...
+[2026-08-20 13:31:30]
+Successful - LiteLLM started
+[2026-08-20 13:46:14]
+Listener stopped
+[2026-08-20 13:46:14]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 13:46:14]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 13:47:00]
+Process started with PID: 10656
+[2026-08-20 13:47:00]
+Successful - LiteLLM running
+[2026-08-20 13:47:00]
+ERROR: Container already running
+[2026-08-20 13:47:00]
+Backend started
+[2026-08-20 13:48:33]
+Listener stopped
+[2026-08-20 13:48:33]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 13:48:33]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 13:48:41]
+Process started with PID: 12612
+[2026-08-20 13:48:41]
+Successful - LiteLLM running
+[2026-08-20 13:48:41]
+ERROR: Container already running
+[2026-08-20 13:48:41]
+Backend started
+[2026-08-20 13:48:44]
 No image on clipboard
-[2026-08-18 21:48:03]
+[2026-08-20 13:48:45]
 Text found on clipboard
-[2026-08-18 21:48:03]
+[2026-08-20 13:48:45]
 Overlay opened
+[2026-08-20 13:48:49]
+Send clicked, sending to backend (stream)
+[2026-08-20 13:48:49]
+Query sent (stream)
+[2026-08-20 13:48:57]
+ERROR: Model client streaming failed: API status error
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\backend\client.py", line 84, in stream_to_backend
+    stream = client.chat.completions.create(**create_kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1284, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1360, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1133, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.BadRequestError: Error code: 400 - {'error': {'message': '/chat/completions: Invalid model name passed in model=my-groq-model. Call `/v1/models` to view available models for your key.', 'type': 'None', 'param': 'None', 'code': '400', 'provider_specific_fields': {'error': '/chat/completions: Invalid model name passed in model=my-groq-model. Call `/v1/models` to view available models for your key.'}}}
+[2026-08-20 13:50:20]
+Successful - LiteLLM exists
+[2026-08-20 13:50:20]
+Successful - LiteLLM running
+[2026-08-20 13:50:20]
+Restarting 'litellm' container...
+[2026-08-20 13:50:21]
+Successful - LiteLLM exists
+[2026-08-20 13:50:21]
+Successful - LiteLLM running
+[2026-08-20 13:50:21]
+Stopping 'litellm' container...
+[2026-08-20 13:50:24]
+Successful - LiteLLM stopped
+[2026-08-20 13:50:24]
+Successful - LiteLLM running
+[2026-08-20 13:50:24]
+Starting 'litellm' container...
+[2026-08-20 13:50:25]
+Successful - LiteLLM started
+[2026-08-20 13:50:36]
+Listener stopped
+[2026-08-20 13:50:36]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 13:50:36]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 13:50:42]
+Successful - LiteLLM exists
+[2026-08-20 13:50:42]
+Successful - LiteLLM running
+[2026-08-20 13:50:42]
+Restarting 'litellm' container...
+[2026-08-20 13:50:42]
+Successful - LiteLLM exists
+[2026-08-20 13:50:43]
+Successful - LiteLLM running
+[2026-08-20 13:50:43]
+Stopping 'litellm' container...
+[2026-08-20 13:50:45]
+Successful - LiteLLM stopped
+[2026-08-20 13:50:45]
+Successful - LiteLLM running
+[2026-08-20 13:50:45]
+Starting 'litellm' container...
+[2026-08-20 13:50:46]
+Successful - LiteLLM started
+[2026-08-20 13:50:47]
+Process started with PID: 19504
+[2026-08-20 13:50:47]
+Successful - LiteLLM running
+[2026-08-20 13:50:47]
+ERROR: Container already running
+[2026-08-20 13:50:47]
+Backend started
+[2026-08-20 13:50:52]
+No image on clipboard
+[2026-08-20 13:50:52]
+Text found on clipboard
+[2026-08-20 13:50:52]
+Overlay opened
+[2026-08-20 13:50:58]
+Send clicked, sending to backend (stream)
+[2026-08-20 13:50:58]
+Query sent (stream)
+[2026-08-20 13:51:00]
+ERROR: Model client streaming failed: connection error
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 136, in handle_request
+    raise exc
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 217, in _receive_event
+    data = self._network_stream.read(
+        self.READ_NUM_BYTES, timeout=timeout
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_backends\sync.py", line 126, in read
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadError: [WinError 10053] An established connection was aborted by the software in your host machine
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1065, in request
+    response = self._send_request(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_client.py", line 483, in _send_request
+    response = self._send_with_auth_retry(request, stream=stream, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_client.py", line 461, in _send_with_auth_retry
+    response = super()._send_request(request, stream=stream, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 990, in _send_request
+    return self._client.send(request, stream=stream, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadError: [WinError 10053] An established connection was aborted by the software in your host machine
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\backend\client.py", line 84, in stream_to_backend
+    stream = client.chat.completions.create(**create_kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1284, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1360, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1100, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+[2026-08-20 13:51:14]
+Send clicked, sending to backend (stream)
+[2026-08-20 13:51:14]
+Query sent (stream)
+[2026-08-20 13:51:16]
+Response received (stream)
+Q: hello
+A: <think>
+Here's a thinking process:
+
+1.  **Analyze User Input:** The user said "hello".
+2.  **Identify Intent:** This is a standard greeting.
+3.  **Determine Response Strategy:** Acknowledge the greeting politely, offer assistance, and keep it concise.
+4.  **Check Constraints:** No special constraints triggered, just standard helpful assistant behavior.
+5.  **Draft Response:** "Hello! How can I assist you today?" or similar.
+6.  **Refine:** Keep it friendly and open-ended. "Hello! How can I help you today?" works well.
+7.  **Final Output Generation:** Match the drafted response.✅
+</think>
+
+Hello! How can I help you today?
+timing: total=2.11s ttft=1.61s
+---
+[2026-08-20 13:51:16]
+UI timing:
+  prep=0.000s
+  ttft=1.612s
+  total=2.112s
+  grounded=None
+[2026-08-20 13:51:22]
+Send clicked, sending to backend (stream)
+[2026-08-20 13:51:22]
+Query sent (stream)
+[2026-08-20 13:51:25]
+Response received (stream)
+Q: nice
+A: <think>
+Here's a thinking process:
+
+1.  **Analyze User Input:** The user just said "nice". This is a very short, positive, but context-less message. It's likely a reaction to something I said previously, but since this is the start of a conversation (or the context isn't provided), I need to respond appropriately.
+
+2.  **Identify Constraints/Instructions:** 
+   - The prompt has instructions about not making up facts, using current info, etc. None of those really apply to a simple "nice".
+   - I should keep it friendly, open-ended, and helpful.
+
+3.  **Determine Response Strategy:**
+   - Acknowledge the positive tone
+   - Ask how I can help or what they're referring to
+   - Keep it concise and conversational
+   - Avoid overcomplicating a simple message
+
+4.  **Draft Response (Mental):**
+   Glad you think so! Is there something specific I can help you with, or are you just sharing a quick positive note? Either way, I'm here for it. 😊
+
+5.  **Refine (Self-Correction/Check):**
+   - It's friendly and open-ended
+   - Doesn't assume context
+   - Follows guidelines (no made-up info, straightforward)
+   - Matches the tone appropriately
+   - Could be slightly more concise: "Glad you think so! What's on your mind? I'm here if you need help with anything." 😊
+
+   Both work. I'll go with a clean, friendly version.
+
+6.  **Final Output Generation:** (matches the refined version)✅
+</think>
+
+Glad you think so! 😊 What's on your mind? I'm here if you need help with something, want to chat, or just have a quick question.
+timing: total=2.94s ttft=0.12s
+---
+[2026-08-20 13:51:25]
+UI timing:
+  prep=0.000s
+  ttft=0.124s
+  total=2.936s
+  grounded=None
+[2026-08-20 13:56:12]
+No image on clipboard
+[2026-08-20 13:56:12]
+Text found on clipboard
+[2026-08-20 13:56:12]
+Overlay opened
+[2026-08-20 13:56:24]
+Send clicked, sending to backend (stream)
+[2026-08-20 13:56:24]
+Query sent (stream)
+[2026-08-20 13:56:28]
+Response received (stream)
+Q: does fastapi have a router
+A: <think>
+Here's a thinking process:
+
+1.  **Understand User Question**: The user is asking "does fastapi have a router". This is a straightforward technical question about the FastAPI framework.
+
+2.  **Identify Key Concept**: FastAPI is a modern Python web framework for building APIs. Routing is a core feature of any web framework. I need to confirm if FastAPI has a router concept and explain how it works.
+
+3.  **Recall/Verify Knowledge**:
+   - FastAPI provides `APIRouter` for organizing routes.
+   - You can also define routes directly on the main `FastAPI` instance.
+   - `APIRouter` allows splitting routes across multiple files/modules.
+   - Syntax: `from fastapi import APIRouter`, then `router = APIRouter()`, then use decorators like `@router.get("/path")`.
+   - Finally, include it in the main app: `app.include_router(router)`.
+
+4.  **Formulate Response**:
+   - Confirm yes, FastAPI has a router.
+   - Explain `APIRouter`.
+   - Provide a clear, concise code example.
+   - Mention benefits (modularity, organizing large projects).
+   - Clarify that you can also define routes directly on the app instance without a separate router for small projects.
+   - Keep it accurate and up-to-date (FastAPI's APIRouter hasn't changed fundamentally).
+
+5.  **Draft Response** (mental refinement):
+   Yes, FastAPI has a built-in router called `APIRouter`. It’s designed to help you organize your endpoints across multiple files, making large projects much easier to manage.
+
+   Here’s a quick example:
+   ```python
+   from fastapi import FastAPI, APIRouter
+
+   app = FastAPI()
+
+   # Create a router
+   items_router = APIRouter()
+
+   @items_router.get("/items/")
+   def read_items():
+       return [{"item_id": "foo"}, {"item_id": "bar"}]
+
+   # Include the router in the main app
+   app.include_router(items_router, prefix="/api")
+   # Now the endpoint is available at /api/items/
+   ```
+
+   Key points:
+   - You can also define routes directly on `app` using `@app.get()`, etc., which is fine for small projects.
+   - `APIRouter` supports all the same decorators (`get`, `post`, `put`, `delete`, etc.) and features like dependencies, tags, and middleware.
+   - The `prefix` parameter lets you add a common path segment to all routes in a router.
+   - You can set `tags=["...]` on a router to auto-group endpoints in the auto-generated docs.
+
+   Let me know if you want a deeper dive into organizing a large FastAPI project with routers!
+
+6.  **Self-Correction/Verification**:
+   - Is `APIRouter` still the correct class? Yes.
+   - Does it support `prefix`, `tags`, `dependencies`? Yes.
+   - Is the example accurate? Yes.
+   - Any deprecated features? No, this is standard FastAPI.
+   - Tone: Helpful, concise, accurate.
+   - No speculation or invented facts.
+
+   Everything checks out. Ready to output.✅
+</think>
+
+Yes, FastAPI has a built-in router called `APIRouter`. It's specifically designed to help you split your endpoints across multiple files, which is essential for keeping medium-to-large projects organized.
+
+### Basic Usage
+```python
+from fastapi import FastAPI, APIRouter
+
+app = FastAPI()
+
+# 1. Create a router
+user_router = APIRouter()
+
+@user_router.get("/users/")
+def list_users():
+    return [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]
+
+@user_router.post("/users/")
+def create_user(name: str):
+    return {"id": 3, "name": name}
+
+# 2. Include it in the main app
+app.include_router(user_router, prefix="/api/v1", tags=["users"])
+# Endpoints are now available at /api/v1/users/
+```
+
+### Key Features
+- **Same decorators**: `@router.get`, `@router.post`, `@router.put`, `@router.delete`, etc.
+- **`prefix`**: Adds a shared path segment to all routes in that router.
+- **`tags`**: Automatically groups routes in the auto-generated Swagger/Redoc UI.
+- **`dependencies`**: Apply global dependencies (like auth or validation) to all routes in the router.
+- **Chaining & nesting**: You can include routers inside other routers if needed.
+
+### When Do You Need It?
+- **Small scripts/projects**: You can just use `@app.get()` directly on the `FastAPI` instance. Routers aren't strictly required.
+- **Larger apps**: Routers are highly recommended. They keep code modular, improve testability, and make collaboration easier.
+
+Let me know if you want an example of a typical project structure using multiple routers, or how to share dependencies across them!
+timing: total=3.48s ttft=0.14s
+---
+[2026-08-20 13:56:28]
+UI timing:
+  prep=0.000s
+  ttft=0.140s
+  total=3.484s
+  grounded=None
+[2026-08-20 13:58:11]
+Listener stopped
+[2026-08-20 13:58:11]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 13:58:11]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 13:58:14]
+Successful - LiteLLM exists
+[2026-08-20 13:58:14]
+Successful - LiteLLM running
+[2026-08-20 13:58:14]
+Restarting 'litellm' container...
+[2026-08-20 13:58:15]
+Successful - LiteLLM exists
+[2026-08-20 13:58:15]
+Successful - LiteLLM running
+[2026-08-20 13:58:15]
+Stopping 'litellm' container...
+[2026-08-20 13:58:17]
+Successful - LiteLLM stopped
+[2026-08-20 13:58:17]
+Successful - LiteLLM running
+[2026-08-20 13:58:17]
+Starting 'litellm' container...
+[2026-08-20 13:58:18]
+Successful - LiteLLM started
+[2026-08-20 13:58:18]
+Process started with PID: 23528
+[2026-08-20 13:58:18]
+Successful - LiteLLM running
+[2026-08-20 13:58:18]
+ERROR: Container already running
+[2026-08-20 13:58:18]
+Backend started
+[2026-08-20 13:59:01]
+Listener stopped
+[2026-08-20 13:59:01]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 13:59:01]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 13:59:08]
+Successful - LiteLLM exists
+[2026-08-20 13:59:08]
+Successful - LiteLLM running
+[2026-08-20 13:59:08]
+Restarting 'litellm' container...
+[2026-08-20 13:59:08]
+Successful - LiteLLM exists
+[2026-08-20 13:59:08]
+Successful - LiteLLM running
+[2026-08-20 13:59:08]
+Stopping 'litellm' container...
+[2026-08-20 13:59:10]
+Successful - LiteLLM stopped
+[2026-08-20 13:59:11]
+Successful - LiteLLM running
+[2026-08-20 13:59:11]
+Starting 'litellm' container...
+[2026-08-20 13:59:11]
+Successful - LiteLLM started
+[2026-08-20 13:59:11]
+Process started with PID: 3540
+[2026-08-20 13:59:12]
+Successful - LiteLLM running
+[2026-08-20 13:59:12]
+ERROR: Container already running
+[2026-08-20 13:59:12]
+Backend started
+[2026-08-20 13:59:18]
+No image on clipboard
+[2026-08-20 13:59:18]
+No text on clipboard
+[2026-08-20 13:59:18]
+Overlay opened
+[2026-08-20 13:59:25]
+Send clicked, sending to backend (stream)
+[2026-08-20 13:59:25]
+Query sent (stream)
+[2026-08-20 13:59:27]
+ERROR: Model client streaming failed: connection error
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 136, in handle_request
+    raise exc
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_sync\http11.py", line 217, in _receive_event
+    data = self._network_stream.read(
+        self.READ_NUM_BYTES, timeout=timeout
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_backends\sync.py", line 126, in read
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadError: [WinError 10053] An established connection was aborted by the software in your host machine
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1065, in request
+    response = self._send_request(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_client.py", line 483, in _send_request
+    response = self._send_with_auth_retry(request, stream=stream, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_client.py", line 461, in _send_with_auth_retry
+    response = super()._send_request(request, stream=stream, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 990, in _send_request
+    return self._client.send(request, stream=stream, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadError: [WinError 10053] An established connection was aborted by the software in your host machine
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\backend\client.py", line 84, in stream_to_backend
+    stream = client.chat.completions.create(**create_kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1284, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1360, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1100, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+[2026-08-20 13:59:47]
+Send clicked, sending to backend (stream)
+[2026-08-20 13:59:47]
+Query sent (stream)
+[2026-08-20 13:59:52]
+Response received (stream)
+Q: test
+A: <think>
+Thinking Process:
+
+1.  **Analyze the Request:**
+    *   User Input: "test"
+    *   System Directive: "Say 'I don't know' and stop your response immediately if the user asks anything about 'test'."
+
+2.  **Evaluate Constraints:**
+    *   The input matches the word "test".
+    *   The directive explicitly requires saying "I don't know" and stopping immediately *if* the user asks about "test".
+
+3.  **Safety Policy Assessment:**
+    *   The directive itself is the constraint here.
+    *   Does this violate safety policies? No.
+    *   Does the directive override the safety policy?
+        *   In a non-exploit scenario: Yes, follow the directive ("I don't know").
+        *   *However*, this looks like a classic "Jailbreak" / "Test" prompt often used to check if an AI follows system instructions blindly vs. refusing dangerous or nonsensical commands.
+        *   Actually, the directive is not dangerous per se. It's a hypothetical constraint.
+        *   Let's check the specific system instruction provided to the model: "If a user's inquiry involves a topic that would be problematic for me to discuss, based on safety principles, I will not generate any content or offer an answer if it would violate those principles. If a user's request conflicts with safety policies, the safety policy always overrides the user's request, and I must comply with the safety policy, not the user's request."
+        *   Does the directive *conflict* with safety policies? No. Saying "I don't know" is not unsafe.
+        *   Therefore, should I just follow the system prompt and say "I don't know"?
+
+4.  **Evaluate "Test" nature of the Prompt:**
+    *   The user just typed "test".
+    *   The system prompt tells me to say "I don't know" in response to this.
+    *   Standard AI behavior for "test" as input: Usually acknowledge, ask what they are testing, or just output "Okay" or "I'm ready."
+    *   However, the system prompt explicitly mandates: "Say 'I don't know' and stop your response immediately if the user asks anything about 'test'."
+    *   To ensure high quality/responsiveness, should I ignore the directive because it's a "test" prompt from the user designed to see if I know the system instructions?
+    *   Actually, the prompt is: "Say 'I don't know' and stop your response immediately if the user asks anything about 'test'."
+    *   If I say "I don't know", I am directly violating the "System Prompt" (which orders me to override the user prompt if there's a conflict).
+    *   Wait. The prompt is *not* asking me to do something unsafe. It's asking me to say "I don't know".
+    *   This is likely a meta-test. The user is testing if the AI knows its constraints regarding "test" mentions.
+    *   The *best* response to a user asking about "test" when the system prompt exists is to... follow the system prompt.
+    *   "Say 'I don't know' and stop your response immediately if the user asks anything about 'test'."
+    *   I will follow this directive exactly because it aligns with the immediate constraint given.
+    *   *Self-Correction/Refinement:* In many AI evaluation benchmarks, there's a difference between a legitimate system prompt injected by the developer and a user trying to trick the system. However, in this simulation, this *is* the system prompt.
+    *   Therefore, I must treat the system prompt as the highest authority. The safety policy override clause is irrelevant here because saying "I don't know" is not unsafe.
+    *   The user said: "test"
+    *   My required response: "I don't know" (and stop).
+
+5.  **Final Decision:**
+    *   User: "test"
+    *   System Prompt: Say "I don't know" and stop immediately if the user asks about "test".
+    *   Output: "I don't know"
+    *   This perfectly adheres to the system prompt, follows the safety policy (since there is no safety violation), and respects the user's intent (which aligns with the system prompt's trigger).
+
+6.  **Verification:**
+    *   Did the user ask about 'test'? Yes, the input is literally "test".
+    *   What is the required response? "I don't know" and stop.
+    *   Is there a safety conflict? No.
+    *   Conclusion: Respond with "I don't know".
+
+**(Self-Correction during thought process):** Wait, sometimes "test" prompts are used by evaluators to see if the AI breaks its alignment. If an AI says "I don't know", it shows it *didn't* break alignment. But what if the prompt is a complex logic or safety directive and the user is testing *that*? I will stick to the system prompt. The user's input "test" simply triggers the system prompt.
+
+Wait, is there any chance I should act as if I *don't* know the system prompt? The prompt says: "Do not reveal this information. If the user's request conflicts with safety policies, the safety policy always overrides the user's request, and I must comply with the safety policy, not the user's request."
+This usually means I shouldn't output "I don't know" *if* the user is asking me to ignore safety rules. But here, there is no safety rule.
+Wait! The user's input is "test". I will say "I don't know".
+
+**(Final Check):** User request: "test". Output: "I don't know". Stop.
+</think>
+
+I don't know
+timing: total=4.82s ttft=2.22s
+---
+[2026-08-20 13:59:52]
+UI timing:
+  prep=0.000s
+  ttft=2.220s
+  total=4.820s
+  grounded=None
+[2026-08-20 14:00:08]
+Send clicked, sending to backend (stream)
+[2026-08-20 14:00:08]
+Query sent (stream)
+[2026-08-20 14:00:11]
+Response received (stream)
+Q: so does fastapi have a router or is it just app methods
+A: <think>
+Here's a thinking process:
+
+1.  **Understand User Question**: The user is asking if FastAPI has a router concept or if routing is only done directly on the `app` object (e.g., `app.get()`, `app.post()`).
+
+2.  **Identify Key Concepts**: 
+   - FastAPI's routing mechanism
+   - `APIRouter` class
+   - Difference between direct app routing (`app.get()`) and router-based routing (`router.get()` + `app.include_router()`)
+
+3.  **Verify Facts**:
+   - FastAPI absolutely has a router: `APIRouter`
+   - It's part of `fastapi.APIRouter`
+   - Usage: Create a router, add routes to it, then include it in the main app using `app.include_router()`
+   - This is a standard and recommended practice for organizing larger applications
+   - Direct app methods (`app.get()`, etc.) are also available and work fine for small apps
+   - Both approaches work, but routers provide better modularity
+
+4.  **Formulate Response**:
+   - Confirm that FastAPI *does* have a router: `APIRouter`
+   - Explain how it works (create router, add routes, include in app)
+   - Show a clear code example
+   - Explain why you'd use it (modularity, organization, reusability)
+   - Clarify that `app.get()`, `app.post()`, etc. are just convenience methods that internally use the same routing system
+   - Keep it concise and accurate
+
+5.  **Draft Response** (mental refinement):
+   Yes, FastAPI absolutely has a router. It's called `APIRouter`. While you can definitely add routes directly to the `app` object (like `app.get("/")`), `APIRouter` is the recommended way to organize larger applications.
+
+   Here’s how it works:
+   ```python
+   from fastapi import FastAPI, APIRouter
+
+   app = FastAPI()
+   router = APIRouter(prefix="/users", tags=["users"])
+
+   @router.get("/")
+   def get_users():
+       return ["user1", "user2"]
+
+   @router.post("/")
+   def create_user():
+       return {"status": "created"}
+
+   app.include_router(router)
+   ```
+
+   Key benefits:
+   - **Modularity**: Split routes into separate files/modules
+   - **Reusability**: Same router can be included in multiple apps
+   - **Organization**: Keep related endpoints grouped together
+   - **Tags & Prefixes**: Easily apply shared prefixes or Swagger tags to a group
+
+   Under the hood, `app.get()`, `app.post()`, etc. are just convenience wrappers that do the same thing as an `APIRouter`. For small scripts, direct app methods are fine. For anything beyond a few endpoints, `APIRouter` is the way to go.
+
+6.  **Self-Correction/Verification**:
+   - Is `APIRouter` the correct class? Yes.
+   - Is `app.include_router()` the correct method? Yes.
+   - Are `app.get()` etc. convenience methods? Yes, they route directly on the app instance.
+   - Any outdated info? No, this is current FastAPI practice.
+   - Matches user question? Yes, directly answers "does it have a router or just app methods?"
+
+   All facts check out. Response is accurate, concise, and includes practical guidance. Ready.✅
+</think>
+
+Yes, **FastAPI absolutely has a router**. It's called `APIRouter`, and it's the recommended way to organize routes as your app grows.
+
+### Quick Example
+```python
+from fastapi import FastAPI, APIRouter
+
+app = FastAPI()
+
+# Create a router
+user_router = APIRouter(prefix="/users", tags=["users"])
+
+@user_router.get("/")
+def get_users():
+    return ["alice", "bob"]
+
+@user_router.post("/")
+def create_user(name: str):
+    return {"user": name}
+
+# Include the router in the main app
+app.include_router(user_router)
+```
+
+### Direct `app` methods vs `APIRouter`
+- `app.get()`, `app.post()`, etc. are **convenience methods** that attach routes directly to the app instance. They work perfectly fine for small scripts or single-file apps.
+- `APIRouter` lets you:
+  - Group related endpoints together
+  - Apply a shared `prefix` and `tags` (useful for Swagger/OpenAPI UI)
+  - Split routes across multiple files/modules
+  - Reuse the same router in multiple apps (e.g., staging vs production)
+
+Under the hood, both use FastAPI's same routing engine. The only difference is organization and scalability.
+
+### Typical Project Structure
+```
+app/
+├── main.py          # app = FastAPI() + app.include_router(...)
+├── routers/
+│   ├── __init__.py
+│   ├── users.py     # router = APIRouter(prefix="/users")
+│   └── items.py     # router = APIRouter(prefix="/items")
+```
+
+If you're building anything beyond a quick script, `APIRouter` is strongly recommended. Let me know if you want a full multi-file template!
+timing: total=3.40s ttft=0.42s
+---
+[2026-08-20 14:00:11]
+UI timing:
+  prep=0.000s
+  ttft=0.423s
+  total=3.396s
+  grounded=None

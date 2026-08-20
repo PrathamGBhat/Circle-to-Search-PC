@@ -7,10 +7,8 @@ from tkinter import ttk, scrolledtext
 from PIL import Image, ImageTk
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from backend.services.io_compiler import process as compile_and_send
-from backend.services.config_manager import (
-    ConfigRequest, HotkeyRequest, PROVIDERS, save_configuration, save_hotkey,
-)
+from backend.services.io_compiler import process_stream as compile_and_send_stream
+from backend.services.config_manager import ConfigRequest, save_configuration
 from utils.logging_utils import append_log, log_error
 
 # Default popup size and offset from the cursor position
@@ -30,6 +28,14 @@ CLIPBOARD_COUNTDOWN_SECONDS = 3
 # Settings panel geometry
 SETTINGS_WINDOW_WIDTH = 360
 SETTINGS_WINDOW_HEIGHT = 420
+
+# Model provider dropdown options. config_manager.py no longer exposes a
+# PROVIDERS mapping (it just takes whatever provider string the request
+# carries), so the overlay owns this list itself. Kept all-caps so a value
+# picked here still lines up 1:1 with a provider's eventual .env var name.
+PROVIDER_OPTIONS = [
+    "GROQ", "OPENAI", "ANTHROPIC", "GEMINI", "DEEPSEEK", "MISTRAL", "OPENROUTER",
+]
 
 # Placeholder shown for the hotkey field until the user records a new combo.
 # Purely informational here - it just mirrors listener.py's current default
@@ -67,6 +73,7 @@ class Overlay:
         self.preview_label = None
         self.remove_image_btn = None
         self._assistant_body_start = None
+        self._stream_started = False
 
         # The image currently attached and waiting to be sent, plus a
         # reference to its Tk PhotoImage (Tk drops images without a live
@@ -387,38 +394,80 @@ class Overlay:
         self.send_btn.configure(state="disabled")
         self.status_label.configure(text="Sending...")
         self._assistant_body_start = self._append_message("Assistant", "Thinking...")
-        append_log("Send clicked, sending to backend")
+        self._stream_started = False
+        append_log("Send clicked, sending to backend (stream)")
 
         threading.Thread(
-            target=self._send_to_backend, args=(text, image), daemon=True
+            target=self._send_to_backend_stream, args=(text, image), daemon=True
         ).start()
 
-    def _send_to_backend(self, text, image):
-        # io_compiler.process() parses the text/image into a normalized
-        # request, sends it to the backend, and returns a normalized
-        # IOResponse we can render directly.
-        try:
-            response = compile_and_send(text, image)
-            if response.ok:
-                self.root.after(0, self._on_send_done, response.text, "Response received")
-            else:
-                self.root.after(0, self._on_send_done, response.error, response.error)
-        except Exception as exc:
-            log_error("Overlay failed while calling the backend", exc)
-            self.root.after(
-                0, self._on_send_done, "Error - check log for details", "Error - check log for details"
-            )
+    def _send_to_backend_stream(self, text, image):
+        # io_compiler.process_stream() parses the text/image into a
+        # normalized request, streams the backend's response chunk-by-chunk
+        # (calling on_chunk from THIS background thread), and returns a
+        # normalized IOResponse plus timing info once the stream finishes.
+        def on_chunk(piece):
+            self.root.after(0, self._on_stream_chunk, piece)
 
-    def _on_send_done(self, answer, status_message):
-        # Replace the "Thinking..." placeholder body with the actual reply,
-        # without touching the "Assistant: " label before it.
+        try:
+            response, timing = compile_and_send_stream(text, image, on_chunk=on_chunk)
+            if response.ok:
+                self.root.after(0, self._on_stream_done, response.text, "Response received", timing)
+            else:
+                self.root.after(0, self._on_stream_error, response.error)
+        except Exception as exc:
+            log_error("Overlay failed while streaming from the backend", exc)
+            self.root.after(0, self._on_stream_error, "Error - check log for details")
+
+    def _on_stream_chunk(self, piece):
+        # Called on the main thread (via root.after) for every incremental
+        # piece of text as it streams in. The first chunk clears the
+        # "Thinking..." placeholder; every chunk after that just appends.
+        self.chat_log.configure(state="normal")
+        if not self._stream_started:
+            self.chat_log.delete(self._assistant_body_start, tk.END)
+            self._stream_started = True
+        self.chat_log.insert(tk.END, piece)
+        self.chat_log.configure(state="disabled")
+        self.chat_log.see(tk.END)
+
+    def _on_stream_done(self, answer, status_message, timing):
+        # Re-render the final text once more so the saved/displayed message
+        # exactly matches what the backend returned (covers the edge case
+        # of a request that streamed no chunks at all, e.g. immediate
+        # failure after the "Thinking..." placeholder was shown).
         self.chat_log.configure(state="normal")
         self.chat_log.delete(self._assistant_body_start, tk.END)
         self.chat_log.insert(tk.END, answer or "")
         self.chat_log.configure(state="disabled")
         self.chat_log.see(tk.END)
 
+        if timing:
+            ttft = timing.get("first_token")
+            request_start = timing.get("request_start")
+            append_log(
+                "UI timing:",
+                f"  prep={timing.get('prep_time', 0):.3f}s",
+                "  ttft=" + (f"{(ttft - request_start):.3f}s" if ttft and request_start else "n/a"),
+                f"  total={timing.get('total', 0):.3f}s",
+                f"  grounded={timing.get('grounded')}",
+            )
+
         self.status_label.configure(text=status_message)
+        self.send_btn.configure(state="normal")
+
+    def _on_stream_error(self, error_message):
+        # Same placeholder-replacement as a successful reply, but for
+        # errors surfaced from io_compiler/backend (timeouts, invalid key,
+        # empty response, connection failures, etc.) - never leaves the UI
+        # stuck on "Thinking..." or frozen.
+        self.chat_log.configure(state="normal")
+        self.chat_log.delete(self._assistant_body_start, tk.END)
+        self.chat_log.insert(tk.END, error_message or "Error")
+        self.chat_log.configure(state="disabled")
+        self.chat_log.see(tk.END)
+
+        self.status_label.configure(text=error_message or "Error")
         self.send_btn.configure(state="normal")
 
     # ------------------------------------------------------------------
@@ -458,7 +507,7 @@ class Overlay:
         tk.Label(form, text="Model provider").grid(row=0, column=0, sticky="w", pady=(0, 8))
         self.settings_provider_var = tk.StringVar(value="")
         self.settings_provider_menu = tk.OptionMenu(
-            form, self.settings_provider_var, *PROVIDERS.keys(),
+            form, self.settings_provider_var, *PROVIDER_OPTIONS,
             command=lambda _choice: self._on_settings_unlock_check(),
         )
         self.settings_provider_menu.grid(row=0, column=1, sticky="ew", pady=(0, 8))
@@ -553,7 +602,7 @@ class Overlay:
             model_name=self.settings_model_name_entry.get().strip(),
         )
 
-        if not request.is_complete:
+        if not request.is_llm_request:
             self.settings_status_label.configure(
                 text="Fill in custom model name and model name before saving.", fg="red"
             )
@@ -600,7 +649,8 @@ class Overlay:
     # modifier being let go, so "hold Ctrl+Shift, tap F9, release" works
     # the way most hotkey recorders behave. Escape cancels and restores
     # whatever was shown before. Save Hotkey then hands the captured keys
-    # to config_manager.save_hotkey(), which for now just confirms receipt.
+    # to config_manager.save_configuration() (as a hotkey-only ConfigRequest),
+    # which for now just confirms receipt.
     # ------------------------------------------------------------------
 
     def _on_hotkey_record(self):
@@ -679,7 +729,7 @@ class Overlay:
             )
             return
 
-        request = HotkeyRequest(keys=list(self._hotkey_capture_keys))
+        request = ConfigRequest(hotkey_keys=list(self._hotkey_capture_keys))
 
         self.settings_hotkey_save_btn.configure(state="disabled")
         self.settings_hotkey_status_label.configure(text="Saving hotkey...", fg="black")
@@ -691,7 +741,7 @@ class Overlay:
 
     def _send_hotkey_to_config_manager(self, request):
         try:
-            result = save_hotkey(request)
+            result = save_configuration(request)
             self.root.after(0, self._on_hotkey_save_done, result)
         except Exception as exc:
             log_error("Overlay failed while calling config_manager for hotkey", exc)

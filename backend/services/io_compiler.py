@@ -1,12 +1,13 @@
 import base64
 import io as _io
+import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
 
 from PIL import Image
 
-from backend.client import send_to_backend
+from backend.client import BackendError, send_to_backend, stream_to_backend
 from utils.logging_utils import append_log, log_error
 
 @dataclass
@@ -88,3 +89,40 @@ def process(text: str = "", image: Optional[Image.Image] = None) -> IOResponse:
         return IOResponse(error=str(exc))
     
     return compile_output(answer)
+
+
+def process_stream(text: str = "", image: Optional[Image.Image] = None, on_chunk=None):
+    """
+    Streaming counterpart to process(). Compiles the request, then streams
+    the backend's (grounded, vision-capable) response, calling
+    on_chunk(piece) for every incremental piece of text as it arrives.
+
+    Returns (IOResponse, timing) where timing is a dict with prep_time,
+    request_start, first_token, total, and grounded - or None if the
+    request never got far enough to produce timing info.
+    """
+    t_prep_start = time.monotonic()
+    io_request = compile_input(text=text, image=image)
+    prep_time = time.monotonic() - t_prep_start
+
+    if not io_request.text and not io_request.has_image:
+        return IOResponse(error="Nothing to send"), None
+
+    if io_request.has_image:
+        append_log(f"io_compiler: image prepared for send (prep={prep_time:.3f}s)")
+
+    if on_chunk is None:
+        on_chunk = lambda _piece: None
+
+    try:
+        result = stream_to_backend(io_request, on_chunk)
+    except BackendError as exc:
+        return IOResponse(error=str(exc)), None
+    except Exception as exc:
+        log_error("io_compiler: streaming backend call failed", exc)
+        return IOResponse(error=str(exc)), None
+
+    timing = result["timing"]
+    timing["prep_time"] = prep_time
+
+    return compile_output(result["text"]), timing
