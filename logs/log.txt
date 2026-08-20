@@ -1,0 +1,36 @@
+[2026-08-20 20:46:13]
+Already running: The listener is already active.
+[2026-08-20 20:46:30]
+Listener stopped
+[2026-08-20 20:46:30]
+Successful - LiteLLM exists
+[2026-08-20 20:46:30]
+Successful - LiteLLM running
+[2026-08-20 20:46:30]
+Stopping 'litellm' container...
+[2026-08-20 20:46:33]
+Successful - LiteLLM stopped
+[2026-08-20 20:46:33]
+Backend stopped
+[2026-08-20 20:47:03]
+Process started with PID: 18760
+[2026-08-20 20:47:03]
+Successful - LiteLLM running
+[2026-08-20 20:47:03]
+Starting 'litellm' container...
+[2026-08-20 20:47:04]
+Successful - LiteLLM started
+[2026-08-20 20:47:04]
+Backend started
+[2026-08-20 20:48:09]
+Listener stopped
+[2026-08-20 20:48:09]
+Successful - LiteLLM exists
+[2026-08-20 20:48:09]
+Successful - LiteLLM running
+[2026-08-20 20:48:09]
+Stopping 'litellm' container...
+[2026-08-20 20:48:11]
+Successful - LiteLLM stopped
+[2026-08-20 20:48:12]
+Backend stopped
