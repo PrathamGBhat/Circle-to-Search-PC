@@ -1,4 +1,6 @@
 pip install -r windows_requirements.txt
+python -m venv venv
+source ./venv/Scripts/activte
 
 Setup docker before running
 1. Go to backend/litellm
@@ -6,6 +8,13 @@ Setup docker before running
 3. Compose docker with command
   docker compose up -d
 4. Start docker instance
+
+How to add a new api key
+1. First put the api key of provider in .env
+2. Go to litellm_config.yaml and add the new entry similar to existing entries - also make sure to refer to models.litellm.ai for the expected name in litellm.model field
+3. Go to manager.py, uncomment the restart_litellm() line and run manager.py
+4. Go to windows tray icon, stop, start again
+5. Done
 
 Actual running
 1. Create shortcut of control.pyw
@@ -18,9 +27,5 @@ Actual running
 NOTE: Images are supported but make sure you have a vision model in the backend to process those images and also sometimes rate limiting may prevent streaming response
 SUGGESTION: Just use text based groq api key
 
-How to add a new api key
-1. First put the api key of provider in .env
-2. Go to litellm_config.yaml and add the new entry similar to existing entries - also make sure to refer to models.litellm.ai for the expected name in litellm.model field
-3. Go to manager.py, uncomment the restart_litellm() line and run manager.py
-4. Go to windows tray icon, stop, start again
-5. Done
+Debugging:
+1. Any error will be logged to log.txt
