@@ -1,13 +1,12 @@
 import base64
 import io as _io
-import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
 
 from PIL import Image
 
-from backend.client import BackendError, send_to_backend, stream_to_backend
+from backend.client import request_stream
 from utils.logging_utils import append_log, log_error
 
 @dataclass
@@ -24,21 +23,12 @@ class IORequest:
     image_b64: Optional[str] = None # base64-encoded copy, handy for API calls
 
     @property
-    def has_image(self) -> bool:
-        return self.image is not None
-
-@dataclass
-class IOResponse:
-
-    # Text
-    text: str = ""
-
-    # Error check
-    error: Optional[str] = None
+    def has_text(self) -> bool:
+        return bool(self.text)
 
     @property
-    def ok(self) -> bool:
-        return self.error is None
+    def has_image(self) -> bool:
+        return self.image is not None
 
 def _image_to_b64(image: Image.Image) -> str:
     buf = _io.BytesIO()
@@ -57,6 +47,19 @@ def compile_input(text: str = "", image: Optional[Image.Image] = None) -> IORequ
     return IORequest(text=text, image=image, image_b64=image_b64)
 
 
+@dataclass
+class IOResponse:
+
+    # Text
+    text: str = ""
+
+    # Error check
+    error: Optional[str] = None
+
+    @property
+    def ok(self) -> bool:
+        return self.error is None
+
 def compile_output(answer) -> IOResponse:
 
     # Answer
@@ -70,59 +73,32 @@ def compile_output(answer) -> IOResponse:
     # Response object
     return IOResponse(text=answer)
 
-def process(text: str = "", image: Optional[Image.Image] = None) -> IOResponse:
+
+def process_stream(text: str = "", image: Optional[Image.Image] = None, on_chunk=None):
 
     # Accept input and complile request object
     io_request = compile_input(text=text, image=image)
 
-    if not io_request.text and not io_request.has_image:
+    if not io_request.has_text:
+        append_log("No text attached")
+
+    if not io_request.has_image:
+        append_log("No image attached")
+
+    if not io_request.has_text and not io_request.has_image:
+        log_error("Request not sent - nothing to send")
         return IOResponse(error="Nothing to send")
 
-    if io_request.has_image:
-        append_log("io_compiler: image attached (not yet sent to model - text-only backend)")
-
-    # Get answer and compile response object
-    try:
-        answer = send_to_backend(io_request)
-    except Exception as exc:
-        log_error("io_compiler: backend call failed", exc)
-        return IOResponse(error=str(exc))
-    
-    return compile_output(answer)
-
-
-def process_stream(text: str = "", image: Optional[Image.Image] = None, on_chunk=None):
-    """
-    Streaming counterpart to process(). Compiles the request, then streams
-    the backend's (grounded, vision-capable) response, calling
-    on_chunk(piece) for every incremental piece of text as it arrives.
-
-    Returns (IOResponse, timing) where timing is a dict with prep_time,
-    request_start, first_token, total, and grounded - or None if the
-    request never got far enough to produce timing info.
-    """
-    t_prep_start = time.monotonic()
-    io_request = compile_input(text=text, image=image)
-    prep_time = time.monotonic() - t_prep_start
-
-    if not io_request.text and not io_request.has_image:
-        return IOResponse(error="Nothing to send"), None
-
-    if io_request.has_image:
-        append_log(f"io_compiler: image prepared for send (prep={prep_time:.3f}s)")
-
+    # Handle missing callback
     if on_chunk is None:
-        on_chunk = lambda _piece: None
+        append_log("Warning: Missing callback from overlay")
+        on_chunk = lambda _piece: None # Streams to nowhere
 
+    # Send to client, stream response and finally compile output to store in IOResponse
     try:
-        result = stream_to_backend(io_request, on_chunk)
-    except BackendError as exc:
-        return IOResponse(error=str(exc)), None
+        result = request_stream(io_request, on_chunk)
     except Exception as exc:
         log_error("io_compiler: streaming backend call failed", exc)
-        return IOResponse(error=str(exc)), None
-
-    timing = result["timing"]
-    timing["prep_time"] = prep_time
-
-    return compile_output(result["text"]), timing
+        return IOResponse(error=str(exc))
+    
+    return compile_output(result["text"])

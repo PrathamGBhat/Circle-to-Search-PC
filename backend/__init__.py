@@ -1,1 +1,0 @@
-from .client import send_to_backend
