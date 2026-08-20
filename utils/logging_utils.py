@@ -4,7 +4,7 @@ import traceback
 
 # Global config
 ROOT_DIR = Path(__file__).resolve().parent.parent
-LOG_FILE = ROOT_DIR / "log.txt"
+LOG_FILE = ROOT_DIR / "logs" / "log.txt"
 
 def append_log(*lines):
 
