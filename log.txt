@@ -1158,3 +1158,340 @@ No image on clipboard
 Text found on clipboard
 [2026-08-20 15:27:31]
 Overlay opened
+[2026-08-20 19:36:12]
+Listener stopped
+[2026-08-20 19:36:12]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 19:36:12]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 19:36:37]
+Process started with PID: 21816
+[2026-08-20 19:36:37]
+Successful - LiteLLM running
+[2026-08-20 19:36:37]
+ERROR: Container already running
+[2026-08-20 19:36:37]
+Backend started
+[2026-08-20 19:36:41]
+No image on clipboard
+[2026-08-20 19:36:41]
+Text found on clipboard
+[2026-08-20 19:36:41]
+Overlay opened
+[2026-08-20 19:36:46]
+Send clicked, sending to backend (stream)
+[2026-08-20 19:36:46]
+No image attached
+[2026-08-20 19:36:46]
+Query sent
+[2026-08-20 19:37:09]
+ERROR: io_compiler: streaming backend call failed
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\backend\client.py", line 70, in request_stream
+    stream = litellm_client.chat.completions.create(**create_kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1284, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1360, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1133, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.InternalServerError: Error code: 500 - {'error': {'message': 'litellm.APIConnectionError: APIConnectionError: GroqException - Invalid user message at index 1. Please ensure all user messages are valid OpenAI chat completion messages.. Received Model Group=my-groq-model\nAvailable Model Group Fallbacks=None', 'type': None, 'param': None, 'code': '500'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\backend\services\io_compiler.py", line 99, in process_stream
+    result = request_stream(io_request, on_chunk)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\backend\client.py", line 82, in request_stream
+    log_error("Error: " + exc)
+              ~~~~~~~~~~^~~~~
+TypeError: can only concatenate str (not "InternalServerError") to str
+[2026-08-20 19:37:39]
+Send clicked, sending to backend (stream)
+[2026-08-20 19:37:39]
+No image attached
+[2026-08-20 19:37:39]
+Query sent
+[2026-08-20 19:37:56]
+ERROR: io_compiler: streaming backend call failed
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\backend\client.py", line 70, in request_stream
+    stream = litellm_client.chat.completions.create(**create_kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1284, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1360, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\venv\Lib\site-packages\openai\_base_client.py", line 1133, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.InternalServerError: Error code: 500 - {'error': {'message': 'litellm.APIConnectionError: APIConnectionError: GroqException - Invalid user message at index 1. Please ensure all user messages are valid OpenAI chat completion messages.. Received Model Group=my-groq-model\nAvailable Model Group Fallbacks=None', 'type': None, 'param': None, 'code': '500'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\backend\services\io_compiler.py", line 99, in process_stream
+    result = request_stream(io_request, on_chunk)
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\backend\client.py", line 82, in request_stream
+    log_error("Error: " + str(exc))
+              ~~~~~~~~~~^~~~~
+TypeError: can only concatenate str (not "InternalServerError") to str
+[2026-08-20 19:38:04]
+Listener stopped
+[2026-08-20 19:38:04]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 19:38:04]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 19:38:08]
+Process started with PID: 10504
+[2026-08-20 19:38:08]
+Successful - LiteLLM running
+[2026-08-20 19:38:08]
+ERROR: Container already running
+[2026-08-20 19:38:08]
+Backend started
+[2026-08-20 19:38:39]
+No image on clipboard
+[2026-08-20 19:38:39]
+Text found on clipboard
+[2026-08-20 19:38:39]
+Overlay opened
+[2026-08-20 19:38:44]
+Send clicked, sending to backend (stream)
+[2026-08-20 19:38:44]
+No image attached
+[2026-08-20 19:38:44]
+Query sent
+[2026-08-20 19:39:00]
+ERROR: Error: Error code: 500 - {'error': {'message': 'litellm.APIConnectionError: APIConnectionError: GroqException - Invalid user message at index 1. Please ensure all user messages are valid OpenAI chat completion messages.. Received Model Group=my-groq-model\nAvailable Model Group Fallbacks=None', 'type': None, 'param': None, 'code': '500'}}
+[2026-08-20 19:39:00]
+Response received (stream)Q: hello
+A: 
+[2026-08-20 19:40:30]
+No image on clipboard
+[2026-08-20 19:40:30]
+Text found on clipboard
+[2026-08-20 19:40:30]
+Overlay opened
+[2026-08-20 19:40:37]
+Send clicked, sending to backend (stream)
+[2026-08-20 19:40:37]
+No image attached
+[2026-08-20 19:40:37]
+Query sent
+[2026-08-20 19:40:52]
+Listener stopped
+[2026-08-20 19:40:52]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 19:40:52]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 19:41:25]
+Process started with PID: 15944
+[2026-08-20 19:41:25]
+Successful - LiteLLM running
+[2026-08-20 19:41:25]
+ERROR: Container already running
+[2026-08-20 19:41:25]
+Backend started
+[2026-08-20 19:41:29]
+No image on clipboard
+[2026-08-20 19:41:29]
+Text found on clipboard
+[2026-08-20 19:41:29]
+Overlay opened
+[2026-08-20 19:41:32]
+Send clicked, sending to backend (stream)
+[2026-08-20 19:41:32]
+No image attached
+[2026-08-20 19:41:32]
+Query sent
+[2026-08-20 19:41:49]
+ERROR: Error code: 500 - {'error': {'message': 'litellm.APIConnectionError: APIConnectionError: GroqException - Invalid user message at index 1. Please ensure all user messages are valid OpenAI chat completion messages.. Received Model Group=my-groq-model\nAvailable Model Group Fallbacks=None', 'type': None, 'param': None, 'code': '500'}}
+[2026-08-20 19:41:49]
+Response received (stream)Q: hello
+A: 
+[2026-08-20 19:43:24]
+Listener stopped
+[2026-08-20 19:43:24]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 19:43:24]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 19:43:35]
+Process started with PID: 9032
+[2026-08-20 19:43:36]
+Successful - LiteLLM running
+[2026-08-20 19:43:36]
+ERROR: Container already running
+[2026-08-20 19:43:36]
+Backend started
+[2026-08-20 19:43:38]
+No image on clipboard
+[2026-08-20 19:43:38]
+Text found on clipboard
+[2026-08-20 19:43:38]
+Overlay opened
+[2026-08-20 19:43:43]
+Send clicked, sending to backend (stream)
+[2026-08-20 19:43:43]
+No image attached
+[2026-08-20 19:43:43]
+Query sent
+[2026-08-20 19:43:46]
+Response received (stream)
+Q: hello
+A: <think>
+Here's a thinking process:
+
+1.  **Analyze User Input:** The user said "hello".
+2.  **Identify Intent:** This is a standard greeting. The user is initiating a conversation.
+3.  **Determine Response Strategy:** Acknowledge the greeting politely, offer assistance, and keep it open-ended to encourage the user to share what they need help with.
+4.  **Draft Response (Internal):** Hello! How can I assist you today?
+5.  **Check Constraints:** The prompt includes system instructions about not guessing, not inventing facts, and acknowledging when I lack current/external/fast-changing info. This doesn't apply to a simple greeting, so I just need to respond naturally and-helpfully.
+6.  **Refine Response:** Keep it friendly, concise, and ready to help. "Hello! How can I help you today?" is perfect.
+7.  **Final Output Generation:** Output the refined response.✅
+</think>
+
+Hello! How can I help you today?
+[2026-08-20 19:43:52]
+Send clicked, sending to backend (stream)
+[2026-08-20 19:43:52]
+No image attached
+[2026-08-20 19:43:52]
+Query sent
+[2026-08-20 19:43:53]
+Response received (stream)
+Q: hello
+A: <think>
+Here's a thinking process:
+
+1.  **Analyze User Input:**
+   - User says: "hello"
+   - This is a standard greeting.
+
+2.  **Identify Intent:**
+   - The user is initiating a conversation.
+   - No specific question or request is made.
+
+3.  **Determine Response Strategy:**
+   - Acknowledge the greeting politely.
+   - Offer assistance.
+   - Keep it open-ended to encourage the user to share what they need.
+   - Maintain a friendly, professional tone.
+
+4.  **Draft Response (Mental):**
+   Hello! How can I help you today?
+
+5.  **Check Against Guidelines:**
+   - No external/fast-changing info needed.
+   - No facts/numbers/sources to verify.
+   - Matches the simple greeting appropriately.
+
+6.  **Final Output Generation:** (matches the draft)
+   "Hello! How can I help you today?"✅
+</think>
+
+Hello! How can I help you today?
+[2026-08-20 19:44:01]
+Listener stopped
+[2026-08-20 19:44:01]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 19:44:01]
+ERROR: Failed to stop the backend
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\windows\control.pyw", line 108, in _worker
+    from deployment.litellm.manager import stop_litellm # Lazy import to allow startup execution of .pyw
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\OneDrive\Desktop\Circle-to-Search-PC\Circle-to-Search-PC\deployment\litellm\manager.py", line 5, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+[2026-08-20 19:44:06]
+Process started with PID: 21408
+[2026-08-20 19:44:06]
+Successful - LiteLLM running
+[2026-08-20 19:44:06]
+ERROR: Container already running
+[2026-08-20 19:44:06]
+Backend started
