@@ -1,31 +1,84 @@
-pip install -r windows_requirements.txt
-python -m venv venv
-source ./venv/Scripts/activte
+# Circle to Search for Windows
 
-Setup docker before running
-1. Go to backend/litellm
-2. Add your api keys for gemini and groq and set litellm master key as "sk-1234" in docker-compose.yml (Only gemini and groq supported for now) 
-3. Compose docker with command
-  docker compose up -d
-4. Start docker instance
+A Windows desktop utility that opens an AI chat overlay from a global hotkey. It sends clipboard text and images to a local LiteLLM proxy through an OpenAI-compatible endpoint.
 
-How to add a new api key
-1. First put the api key of provider in .env
-2. Go to litellm_config.yaml and add the new entry similar to existing entries - also make sure to refer to models.litellm.ai for the expected name in litellm.model field
-3. Go to manager.py, uncomment the restart_litellm() line and run manager.py
-4. Go to windows tray icon, stop, start again
-5. Done
+## Requirements
 
-Actual running
-1. Create shortcut of control.pyw
-2. Place it in startup apps
-3. Optionally restart your computer or just execute control.pyw
-4. Open your tray icons to see the icon 
-5. Pressing start starts listener.py as the background process listening if you pressed hotkey
-6. Ctrl + Shift + F9 to open chat interface
-7. If you already copied something on your clipboard, it automatically attaches to prompt
-NOTE: Images are supported but make sure you have a vision model in the backend to process those images and also sometimes rate limiting may prevent streaming response
-SUGGESTION: Just use text based groq api key
+- Windows
+- Python 3.10+
+- Docker Desktop
+- An API key for the configured model provider
 
-Debugging:
-1. Any error will be logged to log.txt
+## Setup
+
+1. Create and activate a virtual environment:
+
+  ```powershell
+  python -m venv venv
+  .\venv\Scripts\Activate.ps1
+  ```
+
+2. Install dependencies:
+
+  ```powershell
+  pip install -r windows_requirements.txt
+  ```
+
+3. Create `.env` from `.env.example` and set `LITELLM_MASTER_KEY`, `LITELLM_BASE_URL`, and the provider key referenced by `deployment/litellm/litellm_config.yaml`.
+
+4. Review the model and provider in `deployment/litellm/litellm_config.yaml`.
+
+## Run
+
+Start the tray controller:
+
+```powershell
+python windows\control.pyw
+```
+
+It starts the listener and LiteLLM backend. Use the tray icon to start or stop the listener.
+
+Default hotkey: `Ctrl + Shift + F9`
+
+The overlay offers available clipboard text or images when it opens. Images require a vision-capable model.
+
+To launch at sign-in, create a shortcut to `windows\control.pyw` in the Windows Startup folder.
+
+## Configure Models
+
+Add the provider key to `.env`, then add or update a `model_list` entry in `deployment/litellm/litellm_config.yaml`. The model name used by the client is defined by `ACTIVE_MODEL` in `backend/client.py`.
+
+Restart LiteLLM after configuration changes:
+
+```powershell
+docker compose -f deployment\litellm\docker-compose.yml down
+docker compose -f deployment\litellm\docker-compose.yml up -d
+```
+
+## Logs
+
+Runtime errors and request activity are written to `log.txt`.
+
+## Control Flow
+
+```mermaid
+flowchart TD
+  Control[windows/control.pyw<br/>Tray controller]
+  Listener[windows/listener.py<br/>Global hotkey listener]
+  Overlay[frontend/overlay.py<br/>Chat overlay]
+  Compiler[backend/services/io_compiler.py<br/>Request compiler]
+  Client[backend/client.py<br/>OpenAI-compatible client]
+  LiteLLM[deployment/litellm<br/>LiteLLM Docker service]
+  Provider[Configured model provider]
+
+  Control -->|starts and stops| Listener
+  Listener -->|starts backend| LiteLLM
+  Listener -->|hotkey + clipboard content| Overlay
+  Overlay --> Compiler
+  Compiler --> Client
+  Client --> LiteLLM
+  LiteLLM --> Provider
+  Provider -->|streamed response| Client
+  Client --> Compiler
+  Compiler --> Overlay
+```
