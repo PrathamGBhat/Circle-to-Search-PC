@@ -405,14 +405,14 @@ class Overlay:
         # io_compiler.process_stream() parses the text/image into a
         # normalized request, streams the backend's response chunk-by-chunk
         # (calling on_chunk from THIS background thread), and returns a
-        # normalized IOResponse plus timing info once the stream finishes.
+        # normalized IOResponse once the stream finishes.
         def on_chunk(piece):
             self.root.after(0, self._on_stream_chunk, piece)
 
         try:
-            response, timing = compile_and_send_stream(text, image, on_chunk=on_chunk)
+            response = compile_and_send_stream(text, image, on_chunk=on_chunk)
             if response.ok:
-                self.root.after(0, self._on_stream_done, response.text, "Response received", timing)
+                self.root.after(0, self._on_stream_done, response.text, "Response received")
             else:
                 self.root.after(0, self._on_stream_error, response.error)
         except Exception as exc:
@@ -431,7 +431,7 @@ class Overlay:
         self.chat_log.configure(state="disabled")
         self.chat_log.see(tk.END)
 
-    def _on_stream_done(self, answer, status_message, timing):
+    def _on_stream_done(self, answer, status_message):
         # Re-render the final text once more so the saved/displayed message
         # exactly matches what the backend returned (covers the edge case
         # of a request that streamed no chunks at all, e.g. immediate
@@ -441,17 +441,6 @@ class Overlay:
         self.chat_log.insert(tk.END, answer or "")
         self.chat_log.configure(state="disabled")
         self.chat_log.see(tk.END)
-
-        if timing:
-            ttft = timing.get("first_token")
-            request_start = timing.get("request_start")
-            append_log(
-                "UI timing:",
-                f"  prep={timing.get('prep_time', 0):.3f}s",
-                "  ttft=" + (f"{(ttft - request_start):.3f}s" if ttft and request_start else "n/a"),
-                f"  total={timing.get('total', 0):.3f}s",
-                f"  grounded={timing.get('grounded')}",
-            )
 
         self.status_label.configure(text=status_message)
         self.send_btn.configure(state="normal")
